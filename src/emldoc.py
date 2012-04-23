@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-''' A EmotionML document generator
+''' An EmotionML document generator
     TODO: study how to use this approach: http://code.activestate.com/recipes/415983/
 '''
 
@@ -8,18 +8,26 @@ __author__ = 'Edmon Begoli'
 import sys
 import xml.dom.minidom
 
-def make_dimension( doc, set, confidence=None ):
+#TODO: make sure that dimensions passed are list of instances of documents
+def make_dimensions( doc, emotion_dimensions, trace=None, value=None, confidence=None ):
    ''' Makes an emotion sub-element dimensions. confidence 
    is optional'''
 
-   category = doc.createElement('category')
-   category.setAttribute('set', set)
-   category.setAttribute('name', name)
+   dimensions = doc.createElement('dimensions')
+   for dimension in emotion_dimensions:
+      dimensions.appendChild( dimension )
+
+   if trace is not None:
+      dimensions.appendChild( trace )
+      
+   if value is not None:
+      dimensions.setAttribute('value',value)
    if confidence is not None:
-      category.setAttribute('confidence',confidence)
+      dimension.setAttribute('confidence',confidence)
+   
    return category   
 
-def make_category( doc, set, name, confidence=None ):
+def make_category( doc, value, category=None ):
    ''' Makes an emotion sub-element category. confidence 
    is optional'''
 
@@ -30,7 +38,12 @@ def make_category( doc, set, name, confidence=None ):
       category.setAttribute('confidence',confidence)
    return category   
 
+def make_emotion(category, dimension, appraisal, action_tendency, reference, info ):   
+
+
 def make_xml():
+   ''' Makes an EmotionML compliant XML document
+   '''
    doc = xml.dom.minidom.Document()
    emotionml = doc.createElement('emotionml')
    doc.appendChild(emotionml)
