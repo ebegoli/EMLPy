@@ -52,8 +52,14 @@ class Representation:
       in the list of representations ' + str(self.representations)
       representation = repr
      
-   def toxml(self, doc):
-      doc.createElement( name )
+   def appendAsXML(self, doc):
+      repr = doc.createElement(name)
+      if traces:
+         for trace in traces:
+            traceElem = doc.createElement(trace)
+            repr.appendChild(traceElem)
+      doc.appendChild(repr)     
+
       
    #el = doc.createElementNS('http://example.net/ns', 'el')
    #el.setAttribute("xmlns", "http://example.net/ns")
@@ -125,7 +131,7 @@ if __name__ == '__main__':
    em1 = EmotionRepresentation()
    em2 = EmotionRepresentation()
    rep = Representation('dimension')
-   rep = Representation('dxmension')
+   #rep = Representation('dxmension')
    em1.info = "test"
    print em1.info
 
