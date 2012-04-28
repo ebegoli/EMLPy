@@ -32,11 +32,17 @@ class Emotion:
    offset_to_start = None
    expressed_through = None
 
+   def toxml(self, doc ):
+      pass
+
 class Representation:
    value = None
    traces = []
    name = None
    confidence = None
+
+   def toxml(self, doc):
+      pass
 
 #TODO: make sure that dimensions passed are list of instances of documents
 def make_dimensions( doc, emotion_dimensions, trace=None, value=None, confidence=None ):
