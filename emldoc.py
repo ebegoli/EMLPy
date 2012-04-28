@@ -8,7 +8,26 @@ __author__ = 'Edmon Begoli'
 import sys
 import xml.dom.minidom
 
-trace = {'freq':2,'samples':[3,3]}
+class Trace:      
+   """ """
+   freq = None
+   samples = []
+
+   def __init__(self, freq, samples):
+      """ """
+      self.freq = freq
+      self.samples = samples
+
+   def __str__(self):
+      """ """
+      return "freq: " + str(self.freq) + " samples: " + str(self.samples)
+
+   def to_xml(self, doc):
+      """ """
+      trace = doc.createElement('trace')
+      trace.setAttribute('freq',str(self.freq))
+      trace.setAttribute('samples',','.join(map(str,self.samples)))
+      return trace
 
 class EmotionRepresentation:
    emotions = []
@@ -45,7 +64,7 @@ class Representation:
    representation = None
    category_ns = None
    value = None
-   traces = []
+   trace = None
    name = None
    confidence = None
 
@@ -70,17 +89,16 @@ class Representation:
       repr = doc.createElement(str(self.representation))
       repr.setAttribute('name',str(self.name))
 
-      if self.traces and self.value:
-         raise Exception('Only one of traces or value can be provided for ' +
+      if self.trace and self.value:
+         raise ValueError('Only one of traces or value can be provided for ' +
             self.representation) 
-      if not self.traces and not self.value:   
-         raise Exception('No traces nor value are provided for ' +
+      if not self.trace and not self.value:   
+         raise ValueError('No trace nor value are provided for ' +
             self.representation) 
 
-      if self.traces:
-         for trace in self.traces:
-            traceElem = doc.createElement(str(trace))
-            repr.appendChild(traceElem)
+      if self.trace:
+            traceDoc = self.trace.to_xml(doc)
+            repr.appendChild(traceDoc)
       else:
          repr.setAttribute('value',str(self.value))
 
@@ -89,6 +107,7 @@ class Representation:
 
       doc.appendChild(repr)     
       return doc
+
 
 
 #TODO: make sure that dimensions passed are list of instances of documents
@@ -150,18 +169,4 @@ def make_xml(emotions, vocabularies, attributes, info=None):
 
 
 if __name__ == '__main__':
-
-   doc = xml.dom.minidom.Document()
-   em1 = EmotionRepresentation()
-   em2 = EmotionRepresentation()
-
-   rep = Representation('dimension')
-   rep.value = '100'
-   #traces = []
-   rep.name = 'aggitation'
-   rep.confidence = '0.5'   
-   print rep.to_xml(doc).toprettyxml()
-
-
-   print em1.info
-
+   pass
