@@ -1,4 +1,4 @@
-EmotionMLPy
+EMLPy
 -----------
 
 Reference implementation for EmotionML markup language vocabularies in Python
@@ -6,9 +6,9 @@ Reference implementation for EmotionML markup language vocabularies in Python
 Structure of a EmotionML document:
 
 emotionml - root  
-attributes: 
-namespace, version  
-   elements:
+attributes:  
+ namespace, version  
+  elements:
    emotion+ 
    attributes: 
    category-set, dimension-set, appraisal-set, action-tendency-set

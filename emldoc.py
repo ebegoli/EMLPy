@@ -14,6 +14,8 @@ class EmotionRepresentation:
    emotions = []
    vocabularies = []
    info = None
+   def toxml():
+      pass
  
 class Emotion: 
    categories = []
@@ -36,13 +38,29 @@ class Emotion:
       pass
 
 class Representation:
+   representations = ('dimension', 'category', 'dimension', 
+      'appraisal', 'action-tendency')
+   representation = None
    value = None
    traces = []
    name = None
    confidence = None
 
+   def __init__(self,repr):
+      assert repr is not None and len(repr) > 0 , 'name of representation is empty'
+      assert repr in self.representations, 'name of representation is not \
+      in the list of representations ' + str(self.representations)
+      representation = repr
+     
    def toxml(self, doc):
-      pass
+      doc.createElement( name )
+      
+   #el = doc.createElementNS('http://example.net/ns', 'el')
+   #el.setAttribute("xmlns", "http://example.net/ns")
+   #doc.appendChild(el)
+
+
+
 
 #TODO: make sure that dimensions passed are list of instances of documents
 def make_dimensions( doc, emotion_dimensions, trace=None, value=None, confidence=None ):
@@ -89,23 +107,25 @@ def make_xml(emotions, vocabularies, attributes, info=None):
    emotionml = doc.createElement('emotionml')
    doc.appendChild(emotionml)
 
-   for emotion in emotions:
-      emotionml.appendChild( make_emotion( doc, emotion ) 
+   #for emotion in emotions:
+   #   emotionml.appendChild( make_emotion( doc, emotion )
 
-   for vocabulary in vocabularies:
-       emotionml.appendChild( make_vocabulary( doc, emotion ) 
+   #for vocabulary in vocabularies:
+   #   emotionml.appendChild( make_vocabulary( doc, emotion ) 
 
    #el = doc.createElementNS('http://example.net/ns', 'el')
    #el.setAttribute("xmlns", "http://example.net/ns")
    #doc.appendChild(el)
    #retrun doc.toprettyxml()
-   return doc
+   #return doc
 
 
 if __name__ == '__main__':
    #print make_xml().toprettyxml()
    em1 = EmotionRepresentation()
    em2 = EmotionRepresentation()
+   rep = Representation('dimension')
+   rep = Representation('dxmension')
    em1.info = "test"
    print em1.info
 
