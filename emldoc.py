@@ -38,6 +38,8 @@ class Emotion:
       pass
 
 class Representation:
+   """  """
+   #TODO: write unit tests
    representations = ('dimension', 'category', 'dimension', 
       'appraisal', 'action-tendency')
    representation = None
@@ -51,15 +53,36 @@ class Representation:
       assert repr in self.representations, 'name of representation is not \
       in the list of representations ' + str(self.representations)
       representation = repr
+
+   def get_category():
+      #TODO: this has to be transformed into name, namespace tuple
+      """ Returns the name of the representation that can be used in 
+      set of categories """
+      return self.representation
      
    def appendAsXML(self, doc):
+      """ Creates EmotionML compliant representation """
       repr = doc.createElement(name)
+      repr.setAttribute('name',self.name)
+      if traces and value:
+         raise Exception('Only one of traces or value can be provided for ' +
+            representation) 
+      if not traces and not value:   
+         raise Exception('No traces nor value are provided for ' +
+            representation) 
+
       if traces:
          for trace in traces:
             traceElem = doc.createElement(trace)
             repr.appendChild(traceElem)
-      doc.appendChild(repr)     
+      else:
+         repr.setAttribute('value',value)
 
+      if confidence:
+         repr.setAttribute('confidence',confidence)   
+
+      doc.appendChild(repr)     
+      return doc
       
    #el = doc.createElementNS('http://example.net/ns', 'el')
    #el.setAttribute("xmlns", "http://example.net/ns")
@@ -131,6 +154,7 @@ if __name__ == '__main__':
    em1 = EmotionRepresentation()
    em2 = EmotionRepresentation()
    rep = Representation('dimension')
+   #rep.name
    #rep = Representation('dxmension')
    em1.info = "test"
    print em1.info
