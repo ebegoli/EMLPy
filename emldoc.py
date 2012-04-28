@@ -43,6 +43,7 @@ class Representation:
    representations = ('dimension', 'category', 'dimension', 
       'appraisal', 'action-tendency')
    representation = None
+   category_ns = None
    value = None
    traces = []
    name = None
@@ -52,43 +53,42 @@ class Representation:
       assert repr is not None and len(repr) > 0 , 'name of representation is empty'
       assert repr in self.representations, 'name of representation is not \
       in the list of representations ' + str(self.representations)
-      representation = repr
+      self.representation = repr
 
-   def get_category():
+   def get_category(self):
       #TODO: this has to be transformed into name, namespace tuple
       """ Returns the name of the representation that can be used in 
       set of categories """
       return self.representation
-     
-   def appendAsXML(self, doc):
-      """ Creates EmotionML compliant representation """
-      repr = doc.createElement(name)
-      repr.setAttribute('name',self.name)
-      if traces and value:
-         raise Exception('Only one of traces or value can be provided for ' +
-            representation) 
-      if not traces and not value:   
-         raise Exception('No traces nor value are provided for ' +
-            representation) 
 
-      if traces:
-         for trace in traces:
-            traceElem = doc.createElement(trace)
+   def __str__(self):
+      """ TODO: """
+      pass
+     
+   def to_xml(self, doc):
+      """ Creates EmotionML compliant representation """
+      repr = doc.createElement(str(self.representation))
+      repr.setAttribute('name',str(self.name))
+
+      if self.traces and self.value:
+         raise Exception('Only one of traces or value can be provided for ' +
+            self.representation) 
+      if not self.traces and not self.value:   
+         raise Exception('No traces nor value are provided for ' +
+            self.representation) 
+
+      if self.traces:
+         for trace in self.traces:
+            traceElem = doc.createElement(str(trace))
             repr.appendChild(traceElem)
       else:
-         repr.setAttribute('value',value)
+         repr.setAttribute('value',str(self.value))
 
-      if confidence:
-         repr.setAttribute('confidence',confidence)   
+      if self.confidence:
+         repr.setAttribute('confidence',str(self.confidence))   
 
       doc.appendChild(repr)     
       return doc
-      
-   #el = doc.createElementNS('http://example.net/ns', 'el')
-   #el.setAttribute("xmlns", "http://example.net/ns")
-   #doc.appendChild(el)
-
-
 
 
 #TODO: make sure that dimensions passed are list of instances of documents
@@ -150,12 +150,18 @@ def make_xml(emotions, vocabularies, attributes, info=None):
 
 
 if __name__ == '__main__':
-   #print make_xml().toprettyxml()
+
+   doc = xml.dom.minidom.Document()
    em1 = EmotionRepresentation()
    em2 = EmotionRepresentation()
+
    rep = Representation('dimension')
-   #rep.name
-   #rep = Representation('dxmension')
-   em1.info = "test"
+   rep.value = '100'
+   #traces = []
+   rep.name = 'aggitation'
+   rep.confidence = '0.5'   
+   print rep.to_xml(doc).toprettyxml()
+
+
    print em1.info
 
