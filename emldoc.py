@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 ''' An EmotionML document generator
-    TODO: study how to use this approach: http://code.activestate.com/recipes/415983/
 '''
 
 __author__ = 'Edmon Begoli'
@@ -35,8 +34,24 @@ class EmotionRepresentation:
    info = None
    def toxml():
       pass
- 
+
+class Info:
+   """ Info element, structure is flexible and it should be text """
+   id=None
+   def __init__(self,id=None):
+      if id:
+         self.id = id
+
 class Emotion: 
+   """
+   Required:
+   
+   Optional: emotion_id, start, end, duration, time-ref-uri, 
+   time-ref-anchor-point, offset-to-start
+   
+   Notes: start, end, duration, time-ref-uri, 
+   time-ref-anchor-point, offset-to-start are all in absolute time units
+   """
    categories = []
    dimensions = []
    apprisals = []
@@ -53,8 +68,37 @@ class Emotion:
    offset_to_start = None
    expressed_through = None
 
-   def toxml(self, doc ):
+   def __init__(self):
       pass
+
+   def to_xml(self, doc ):
+      """ Creates EmotionML compliant Emotion element """
+      emo = doc.createElement('emotion')
+
+      if emotion_id:
+         emo.setAttribute('id', str(emotion_id))
+      if start:
+         emo.setAttribute('start', str(start))
+      if end:
+         emo.setAttribute('end', str(end))
+      if duration:
+         emo.setAttribute('duration', str(duration))
+      if time_ref_uri:
+         emo.setAttribute('time-ref-uri', str(time_ref_uri))
+      if time_ref_anchor_point:
+         emo.setAttribute('time-ref-anchor-point', str(time_ref_anchor_point))
+      if offset_to_start:
+         emo.setAttribute('offset-to-start', str(offset_to_start))
+      if info:
+         emo.appendChild(info.to_xml())
+
+      #TODO: change this logic below to apply to emotion element 
+      #
+
+
+      doc.appendChild(emo)     
+      return doc
+
 
 class Representation:
    """  """
@@ -97,8 +141,7 @@ class Representation:
             self.representation) 
 
       if self.trace:
-            traceDoc = self.trace.to_xml(doc)
-            repr.appendChild(traceDoc)
+            repr.appendChild(self.trace.to_xml(doc))
       else:
          repr.setAttribute('value',str(self.value))
 
