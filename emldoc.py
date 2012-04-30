@@ -52,9 +52,11 @@ class Emotion:
    Notes: start, end, duration, time-ref-uri, 
    time-ref-anchor-point, offset-to-start are all in absolute time units
    """
+
+   #TODO: figure out how to store sets
    categories = []
    dimensions = []
-   apprisals = []
+   appraisals = []
    action_tendencies = []
    references = []
    info = None
@@ -74,6 +76,10 @@ class Emotion:
    def to_xml(self, doc ):
       """ Creates EmotionML compliant Emotion element """
       emo = doc.createElement('emotion')
+
+      if not (self.categories or self.dimensions 
+         or self.appraisals or self.action_tendencies):
+         raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
       if emotion_id:
          emo.setAttribute('id', str(emotion_id))

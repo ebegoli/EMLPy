@@ -1,7 +1,7 @@
 
 import unittest
 from xml.dom.minidom import Document, parseString
-from emldoc import EmotionRepresentation, Representation, Trace
+from emldoc import Emotion, Representation, Trace
 
 class TestEmotionMLGeneration(unittest.TestCase):
 
@@ -12,12 +12,15 @@ class TestEmotionMLGeneration(unittest.TestCase):
         trace = Trace(5,[1,2,3])
         doc = Document()
         print trace.to_xml(doc).toprettyxml()
+    
+    def test_emotion(self):
+        doc = Document()
+        em = Emotion()
+        self.assertRaises(ValueError, em.to_xml, doc)
 
     def test_representation(self):
-        doc = Document()
-        em1 = EmotionRepresentation()
-        em2 = EmotionRepresentation()
 
+        doc = Document() 
         rep = Representation('dimension')
         rep.value = '100'
         rep.name = 'aggitation'
