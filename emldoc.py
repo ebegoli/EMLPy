@@ -25,7 +25,6 @@ import xml.dom.minidom
 
 class Trace:      
    """Representation for the trace - frequency and samples"""
-   #NOTE: this is implemented
    freq = None
    samples = []
 
@@ -51,17 +50,61 @@ class Root:
    vocabularies = []
    info = None
 
-def toxml(self):
-   #TODO: add namespace http://www.w3.org/2009/10/emotionml
+   def toxml(self):
+      #TODO: add namespace http://www.w3.org/2009/10/emotionml
       pass
 
 class Info:
-   """ Info element, structure is flexible and it should be text """
-   #TODO: this is implemented
+   """ Info element <info>, structure is flexible and we represent its content 
+   as text """
+   #TODO: to be tested
+   content=None
    id=None
    def __init__(self,id=None):
       if id:
          self.id = id
+
+   def to_xml(self,doc):
+      """  Constructs <info> element with id attribute and text content """
+      info = doc.createElement('info')
+      info.setAttribute('id',self.id)
+      if self.content is not None and len(str(self.content).strip()) > 0:
+      info_text = doc.createTextNode(str(self.content))
+      info.appendChild(info_text)
+      return info
+
+class Reference:      
+   """Representation for the <reference> - attributes: uri required 
+   and optional: role and media-type. Role must be one of: 
+   expressedBy" (default), "experiencedBy", "triggeredBy", "targetedAt" """
+   uri=None
+   role='expressedBy'
+   media_type=None
+   roles = ('expressedBy', 'experiencedBy', 'triggeredBy', 'targetedAt')
+
+
+   def __init__(self, uri,role="expressedBy",media_type=None):
+      """ Intializes with uri and optionally role and media_type """
+      self.uri = uri
+      if role is not None:
+         self.role = role
+      if media_type is not None:
+         self.media_type = media_type
+
+   def __str__(self):
+      """ Utility string function """
+      return "uri: " + str(self.uri) + " role: " + str(self.role) + 
+      " media-type: " + str(self.media_type)
+
+   def to_xml(self, doc):
+      """ Produces a <reference> element """
+      ref = doc.createElement('reference')
+      ref.setAttribute('uri',str(self.uri))
+      if self.role in (self.roles): 
+         ref.setAttribute('role',self.role)
+      else:
+         raise TypeError( "role ("+self.role+") must actually be one of " + self.roles )
+      return ref
 
 class Emotion: 
    """
@@ -119,8 +162,7 @@ class Emotion:
       if info:
          emo.appendChild(info.to_xml())
 
-      doc.appendChild(emo)     
-      return doc
+      return emo
 
 
 class Representation:
@@ -171,8 +213,7 @@ class Representation:
       if self.confidence:
          repr.setAttribute('confidence',str(self.confidence))   
 
-      doc.appendChild(repr)     
-      return doc
+      return repr
 
 def make_xml(emotions, vocabularies, attributes, info=None):
    ''' Makes an EmotionML compliant XML document

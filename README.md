@@ -1,19 +1,18 @@
 EMLPy
 -----------
 
-Reference implementation for EmotionML markup language vocabularies in Python
+Reference implementation for EmotionML markup language vocabularies in Python.
+EMLPy is intended to be an EmotionML generation library implemented in Python.  
+ 
+Status - In Progress  
 
-Structure of a EmotionML document:
+Completed Elements:  
 
-emotionml - root  
-attributes:  
- namespace, version  
-  elements:
-   emotion+ 
-   attributes: 
-   category-set, dimension-set, appraisal-set, action-tendency-set
-   version
-   id? start? end? duration? time-ref-uri? time-ref-anchor-point? offset-to-start? expressed-through?
-      elements:
-      at least one of each: category, dimension, appraisal, action-tendency  
-      info (occurs only once)
+- Trace
+- Reference
+- Dimension as Representation (only needs to export set)
+- Category as Representation (only needs to export set)
+- Appraisal as Representation (only needs to export set)
+- Action-tendency as Representation (only needs to export set)
+
+
