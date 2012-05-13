@@ -24,35 +24,40 @@ import sys
 import xml.dom.minidom
 
 class Trace:      
-   """ """
+   """Representation for the trace - frequency and samples"""
+   #NOTE: this is implemented
    freq = None
    samples = []
 
    def __init__(self, freq, samples):
-      """ """
+      """ Intializes with both frequency of collection and samples """
       self.freq = freq
       self.samples = samples
 
    def __str__(self):
-      """ """
+      """ Utility string function """
       return "freq: " + str(self.freq) + " samples: " + str(self.samples)
 
    def to_xml(self, doc):
-      """ """
+      """ Produces an EmotionML element """
       trace = doc.createElement('trace')
       trace.setAttribute('freq',str(self.freq))
       trace.setAttribute('samples',','.join(map(str,self.samples)))
       return trace
 
-class EmotionRepresentation:
+class Root:
+   """ Representation for root Emotion element in EmotionML"""
    emotions = []
    vocabularies = []
    info = None
-   def toxml():
+
+def toxml(self):
+   #TODO: add namespace http://www.w3.org/2009/10/emotionml
       pass
 
 class Info:
    """ Info element, structure is flexible and it should be text """
+   #TODO: this is implemented
    id=None
    def __init__(self,id=None):
       if id:
@@ -114,18 +119,14 @@ class Emotion:
       if info:
          emo.appendChild(info.to_xml())
 
-      #TODO: change this logic below to apply to emotion element 
-      #
-
-
       doc.appendChild(emo)     
       return doc
 
 
 class Representation:
-   """  """
+   """ Class represents dimension, category, appraisal or action-tendency """
    #TODO: write unit tests
-   representations = ('dimension', 'category', 'dimension', 
+   representations = ('dimension', 'category', 
       'appraisal', 'action-tendency')
    representation = None
    category_ns = None
@@ -173,46 +174,6 @@ class Representation:
       doc.appendChild(repr)     
       return doc
 
-
-
-#TODO: make sure that dimensions passed are list of instances of documents
-def make_dimensions( doc, emotion_dimensions, trace=None, value=None, confidence=None ):
-   ''' Makes an emotion sub-element dimensions. confidence 
-   is optional'''
-
-   # dimensions = doc.createElement('dimensions')
-   # for dimension in emotion_dimensions:
-   #    dimensions.appendChild( dimension )
-
-   # if trace is not None:
-   #    dimensions.appendChild( trace )
-      
-   # if value is not None:
-   #    dimensions.setAttribute('value',value)
-   # if confidence is not None:
-   #    dimension.setAttribute('confidence',confidence)
-   
-   # return category   
-
-def make_category( doc, value, category=None ):
-   ''' Makes an emotion sub-element category. confidence 
-   is optional'''
-
-   # category = doc.createElement('category')
-   # category.setAttribute('set', set)
-   # category.setAttribute('name', name)
-   # if confidence is not None:
-   #    category.setAttribute('confidence',confidence)
-   # return category   
-
-def make_emotion(doc, children, attributes, info=None ):   
-   ''' pass children tuples, list of attributes and optional info
-       iterate through list of children tuples and attributes 
-       and append them to the doc 
-       Function enforces EmotionML constraints (has_emotion_children()) 
-   '''
-   pass
-
 def make_xml(emotions, vocabularies, attributes, info=None):
    ''' Makes an EmotionML compliant XML document
    '''
@@ -234,4 +195,4 @@ def make_xml(emotions, vocabularies, attributes, info=None):
 
 
 if __name__ == '__main__':
-   pass
+   print "in main ... to be implemented ..."
