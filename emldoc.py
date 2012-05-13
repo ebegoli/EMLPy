@@ -103,18 +103,55 @@ class Reference:
       if self.role in (self.roles): 
          ref.setAttribute('role',self.role)
       else:
-         raise TypeError( "role ("+self.role+") must actually be one of " + self.roles )
+         raise TypeError( "role ("+self.role+") must be one of " + self.roles )
       return ref
 
 class Emotion: 
-   """
-   Required:
+   """ This element represents a single emotion annotation.
+   Children:
+   It has at least one of the following children used to describe an emotion: 
+   (<category>|<dimension>|<appraisal>|<action-tendency>)+
+   <reference>*
+   <info>?
+   Attributes:
+   version indicates the version of the specification to be used for the <emotion> 
+   and its descendants. Documents using this specification MUST use 1.0 for the value. 
+   The value of the version attribute defaults to "1.0".
    
-   Optional: emotion_id, start, end, duration, time-ref-uri, 
-   time-ref-anchor-point, offset-to-start
+   id, a unique identifier for the emotion, of type xsd:ID.
    
-   Notes: start, end, duration, time-ref-uri, 
-   time-ref-anchor-point, offset-to-start are all in absolute time units
+   category-set declares a local category vocabulary (see also <category>) 
+   for the current <emotion> element. The attribute MUST be of type xsd:anyURI 
+   and MUST refer to the ID of a <vocabulary> element defining an emotion 
+   vocabulary with type="category", as specified in Defining vocabularies 
+   for representing emotions.
+   
+   dimension-set declares a local dimension vocabulary (see also <dimension>) 
+   for the current <emotion> element. The attribute MUST be of type xsd:anyURI 
+   and MUST refer to the ID of a <vocabulary> element defining an emotion 
+   vocabulary with type="dimension", as specified in Defining vocabularies 
+   for representing emotions.
+   
+   appraisal-set declares a local appraisal vocabulary (see also <appraisal>) 
+   for the current <emotion> element. The attribute MUST be of type xsd:anyURI 
+   and MUST refer to the ID of a <vocabulary> element defining an emotion 
+   vocabulary with type="appraisal", as specified in Defining vocabularies 
+   for representing emotions.
+   
+   action-tendency-set declares a local action tendency vocabulary 
+   (see also <action-tendency>) for the current <emotion> element. 
+   The attribute MUST be of type xsd:anyURI and MUST refer to the ID of a 
+   <vocabulary> element defining an emotion vocabulary with type="action-tendency", 
+   as specified in Defining vocabularies for representing emotions.
+   
+   start, end, duration, time-ref-uri, time-ref-anchor-point and offset-to-start 
+   provide information about the times at which an emotion happened, 
+   as defined in Timestamps.
+   
+   expressed-through, the modality, or list of modalities, 
+   through which the emotion is expressed.   
+
+   See: http://www.w3.org/TR/emotionml/#s2.1.2
    """
 
    #TODO: figure out how to store sets
