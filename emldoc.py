@@ -44,15 +44,23 @@ class Trace:
       trace.setAttribute('samples',','.join(map(str,self.samples)))
       return trace
 
-class Root:
+class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
    emotions = []
    vocabularies = []
    info = None
 
-   def toxml(self):
-      #TODO: add namespace http://www.w3.org/2009/10/emotionml
+   def __init__(self):
       pass
+
+   def to_xml(self):
+      doc = xml.dom.minidom.Document()
+      em = doc.createElement('emotionml')
+      for emotion in self.emotions:
+         em.appendChild(emotion)
+      #TODO: add namespace http://www.w3.org/2009/10/emotionml
+      doc.appendChild(em)
+      return doc
 
 class Info:
    """ Info element <info>, structure is flexible and we represent its content 
@@ -69,8 +77,8 @@ class Info:
       info = doc.createElement('info')
       info.setAttribute('id',self.id)
       if self.content is not None and len(str(self.content).strip()) > 0:
-      info_text = doc.createTextNode(str(self.content))
-      info.appendChild(info_text)
+         info_text = doc.createTextNode(str(self.content))
+         info.appendChild(info_text)
       return info
 
 class Reference:      
@@ -93,8 +101,7 @@ class Reference:
 
    def __str__(self):
       """ Utility string function """
-      return "uri: " + str(self.uri) + " role: " + str(self.role) + 
-      " media-type: " + str(self.media_type)
+      return "uri: %s role: %s media-type: %s" % str(self.uri) % str(self.role) % str(self.media_type)
 
    def to_xml(self, doc):
       """ Produces a <reference> element """
@@ -155,6 +162,12 @@ class Emotion:
    """
 
    #TODO: figure out how to store sets
+   # this cannot be list, but rather one per emotion
+   category_set = None
+   dimension_set = None
+   appraisal_set = None
+   action_tendency_set = None
+   
    categories = []
    dimensions = []
    appraisals = []
@@ -173,6 +186,14 @@ class Emotion:
 
    def __init__(self):
       pass
+
+   @staticmethod
+   def get_set( representations ):
+      representation_set = []
+      if representations:
+         representation_set = [set([representation.get_category() 
+            for representation in representations])]
+      return representations_set
 
    def to_xml(self, doc ):
       """ Creates EmotionML compliant Emotion element """
@@ -255,9 +276,12 @@ class Representation:
 def make_xml(emotions, vocabularies, attributes, info=None):
    ''' Makes an EmotionML compliant XML document
    '''
-   doc = xml.dom.minidom.Document()
-   emotionml = doc.createElement('emotionml')
-   doc.appendChild(emotionml)
+   emotionml = EmotionML()
+   print emotionml.to_xml().toprettyxml()
+
+   #doc = xml.dom.minidom.Document()
+   #emotionml = doc.createElement('emotionml')
+   #doc.appendChild(emotionml)
 
    #for emotion in emotions:
    #   emotionml.appendChild( make_emotion( doc, emotion )
@@ -273,4 +297,4 @@ def make_xml(emotions, vocabularies, attributes, info=None):
 
 
 if __name__ == '__main__':
-   print "in main ... to be implemented ..."
+   print make_xml(None,None,None)
