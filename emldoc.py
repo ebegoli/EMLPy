@@ -232,14 +232,18 @@ class Representation:
    category_ns = None
    value = None
    trace = None
-   name = None
+   repr_name = None
    confidence = None
 
-   def __init__(self,repr):
-      assert repr is not None and len(repr) > 0 , 'name of representation is empty'
-      assert repr in self.representations, 'name of representation is not \
-      in the list of representations ' + str(self.representations)
-      self.representation = repr
+   def __init__(self,name,representation, trace=None, value=None, confidence=None):
+      assert representation, 'name of representation is empty'
+      assert representation in self.representations, 'name of representation:%s is not in\
+       the list of representations' % str(self.representations)
+      self.representation = representation
+      self.repr_name = name
+      self.trace = trace
+      self.value = value
+      self.confidence = confidence 
 
    def get_category(self):
       #TODO: this has to be transformed into name, namespace tuple
@@ -249,12 +253,13 @@ class Representation:
 
    def __str__(self):
       """ TODO: """
-      pass
+      return "representation:%s name:%s trace:%s value:%s confidence:%s" % \
+      (self.representation, self.repr_name, self.trace, self.value, self.confidence)
      
    def to_xml(self, doc):
       """ Creates EmotionML compliant representation """
       repr = doc.createElement(str(self.representation))
-      repr.setAttribute('name',str(self.name))
+      repr.setAttribute('name',str(self.repr_name))
 
       if self.trace and self.value:
          raise ValueError('Only one of traces or value can be provided for ' +
@@ -278,6 +283,13 @@ def make_xml(emotions, vocabularies, attributes, info=None):
    '''
    emotionml = EmotionML()
    print emotionml.to_xml().toprettyxml()
+
+   rep = Representation(name='test',representation='action-tendency',
+      value='0.5',confidence='1')
+
+   print "Test representation:%s " % rep
+   print rep.to_xml(emotionml.to_xml()).toprettyxml()
+
 
    #doc = xml.dom.minidom.Document()
    #emotionml = doc.createElement('emotionml')
