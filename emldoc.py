@@ -107,6 +107,8 @@ class Reference:
       """ Produces a <reference> element """
       ref = doc.createElement('reference')
       ref.setAttribute('uri',str(self.uri))
+      if self.media_type:
+         ref.setAttribute('media-type',str(self.media_type))
       if self.role in (self.roles): 
          ref.setAttribute('role',self.role)
       else:
@@ -289,6 +291,15 @@ def make_xml(emotions, vocabularies, attributes, info=None):
 
    print "Test representation:%s " % rep
    print rep.to_xml(emotionml.to_xml()).toprettyxml()
+
+   trace = Trace( "2", ('1.5','1.5','1.6')) 
+   print trace.to_xml(emotionml.to_xml()).toprettyxml()
+
+   info = Info("some-id")
+   print info.to_xml(emotionml.to_xml()).toprettyxml()
+
+   reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
+   print reference.to_xml(emotionml.to_xml()).toprettyxml()
 
 
    #doc = xml.dom.minidom.Document()
