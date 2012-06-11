@@ -189,6 +189,18 @@ class Emotion:
    def __init__(self):
       pass
 
+   def add_category(self,category):
+      self.categories.append( category )
+
+   def add_dimension(self,dimension):
+      self.dimensions.append( category )
+
+   def add_apprasial(self,appraisal):
+      self.appraisals.append( appraisal )
+
+   def add_action_tendency(self,tendency):
+      self.action_tendencies.append( tendency )
+
    @staticmethod
    def get_set( representations ):
       representation_set = []
@@ -199,28 +211,36 @@ class Emotion:
 
    def to_xml(self, doc ):
       """ Creates EmotionML compliant Emotion element """
+
       emo = doc.createElement('emotion')
 
       if not (self.categories or self.dimensions 
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
+
+
+      for child in (self.categories,self.dimensions,self.appraisals,
+         self.action_tendencies):
+         for item in child:
+            emo.appendChild(item.to_xml(emo))
+      
       if emotion_id:
-         emo.setAttribute('id', str(emotion_id))
+         emo.setAttribute('id', str(self.emotion_id))
       if start:
-         emo.setAttribute('start', str(start))
+         emo.setAttribute('start', str(self.start))
       if end:
-         emo.setAttribute('end', str(end))
+         emo.setAttribute('end', str(self.end))
       if duration:
-         emo.setAttribute('duration', str(duration))
+         emo.setAttribute('duration', str(self.duration))
       if time_ref_uri:
-         emo.setAttribute('time-ref-uri', str(time_ref_uri))
+         emo.setAttribute('time-ref-uri', str(self.time_ref_uri))
       if time_ref_anchor_point:
-         emo.setAttribute('time-ref-anchor-point', str(time_ref_anchor_point))
+         emo.setAttribute('time-ref-anchor-point', str(self.time_ref_anchor_point))
       if offset_to_start:
-         emo.setAttribute('offset-to-start', str(offset_to_start))
+         emo.setAttribute('offset-to-start', str(self.offset_to_start))
       if info:
-         emo.appendChild(info.to_xml())
+         emo.appendChild(info.to_xml(emo))
 
       return emo
 
