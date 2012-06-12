@@ -186,21 +186,6 @@ class Emotion:
    offset_to_start = None
    expressed_through = None
 
-   def __init__(self):
-      pass
-
-   def add_category(self,category):
-      self.categories.append( category )
-
-   def add_dimension(self,dimension):
-      self.dimensions.append( category )
-
-   def add_apprasial(self,appraisal):
-      self.appraisals.append( appraisal )
-
-   def add_action_tendency(self,tendency):
-      self.action_tendencies.append( tendency )
-
    @staticmethod
    def get_set( representations ):
       representation_set = []
@@ -219,28 +204,27 @@ class Emotion:
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
 
-
       for child in (self.categories,self.dimensions,self.appraisals,
          self.action_tendencies):
          for item in child:
-            emo.appendChild(item.to_xml(emo))
+            emo.appendChild(item.to_xml(doc))
       
-      if emotion_id:
+      if self.emotion_id:
          emo.setAttribute('id', str(self.emotion_id))
-      if start:
+      if self.start:
          emo.setAttribute('start', str(self.start))
-      if end:
+      if self.end:
          emo.setAttribute('end', str(self.end))
-      if duration:
+      if self.duration:
          emo.setAttribute('duration', str(self.duration))
-      if time_ref_uri:
+      if self.time_ref_uri:
          emo.setAttribute('time-ref-uri', str(self.time_ref_uri))
-      if time_ref_anchor_point:
+      if self.time_ref_anchor_point:
          emo.setAttribute('time-ref-anchor-point', str(self.time_ref_anchor_point))
-      if offset_to_start:
+      if self.offset_to_start:
          emo.setAttribute('offset-to-start', str(self.offset_to_start))
-      if info:
-         emo.appendChild(info.to_xml(emo))
+      if self.info:
+         emo.appendChild(self.info.to_xml(doc))
 
       return emo
 
@@ -280,7 +264,8 @@ class Representation:
      
    def to_xml(self, doc):
       """ Creates EmotionML compliant representation """
-      repr = doc.createElement(str(self.representation))
+
+      repr = doc.createElement( str(self.representation) )
       repr.setAttribute('name',str(self.repr_name))
 
       if self.trace and self.value:
@@ -306,6 +291,10 @@ def make_xml(emotions, vocabularies, attributes, info=None):
    emotionml = EmotionML()
    print emotionml.to_xml().toprettyxml()
 
+   emotion = Emotion()
+
+   emotion.emotion_id = "test id"
+
    rep = Representation(name='test',representation='action-tendency',
       value='0.5',confidence='1')
 
@@ -321,6 +310,11 @@ def make_xml(emotions, vocabularies, attributes, info=None):
    reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
    print reference.to_xml(emotionml.to_xml()).toprettyxml()
 
+   emotion.action_tendencies.append(rep)
+   emotion.info = info
+   emotion.references.append(reference)
+
+   print emotion.to_xml(emotionml.to_xml()).toprettyxml()
 
    #doc = xml.dom.minidom.Document()
    #emotionml = doc.createElement('emotionml')
