@@ -47,8 +47,8 @@ class Trace:
 class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
    emotions = []
-   vocabularies = []
    info = None
+   version = "1.0"
 
    def __init__(self):
       pass
@@ -56,9 +56,10 @@ class EmotionML:
    def to_xml(self):
       doc = xml.dom.minidom.Document()
       em = doc.createElement('emotionml')
+      em.setAttribute("xmlns", "http://www.w3.org/2009/10/emotionml")
+      em.setAttribute("version",self.version)
       for emotion in self.emotions:
-         em.appendChild(emotion)
-      #TODO: add namespace http://www.w3.org/2009/10/emotionml
+         em.appendChild(emotion.to_xml(doc))
       doc.appendChild(em)
       return doc
 
@@ -289,7 +290,7 @@ def make_xml(emotions, vocabularies, attributes, info=None):
    ''' Makes an EmotionML compliant XML document
    '''
    emotionml = EmotionML()
-   print emotionml.to_xml().toprettyxml()
+
 
    emotion = Emotion()
 
@@ -299,22 +300,25 @@ def make_xml(emotions, vocabularies, attributes, info=None):
       value='0.5',confidence='1')
 
    print "Test representation:%s " % rep
-   print rep.to_xml(emotionml.to_xml()).toprettyxml()
+   #print rep.to_xml(emotionml.to_xml()).toprettyxml()
 
    trace = Trace( "2", ('1.5','1.5','1.6')) 
-   print trace.to_xml(emotionml.to_xml()).toprettyxml()
+   #print trace.to_xml(emotionml.to_xml()).toprettyxml()
 
    info = Info("some-id")
-   print info.to_xml(emotionml.to_xml()).toprettyxml()
+   #print info.to_xml(emotionml.to_xml()).toprettyxml()
 
    reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
-   print reference.to_xml(emotionml.to_xml()).toprettyxml()
+   #print reference.to_xml(emotionml.to_xml()).toprettyxml()
 
    emotion.action_tendencies.append(rep)
    emotion.info = info
    emotion.references.append(reference)
 
-   print emotion.to_xml(emotionml.to_xml()).toprettyxml()
+   #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
+
+   emotionml.emotions.append(emotion)
+   print emotionml.to_xml().toprettyxml()
 
    #doc = xml.dom.minidom.Document()
    #emotionml = doc.createElement('emotionml')
