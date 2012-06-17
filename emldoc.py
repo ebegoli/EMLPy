@@ -23,32 +23,16 @@ __author__ = 'Edmon Begoli'
 import sys
 import xml.dom.minidom
 
-class Trace:      
-   """Representation for the trace - frequency and samples"""
-   freq = None
-   samples = []
-
-   def __init__(self, freq, samples):
-      """ Intializes with both frequency of collection and samples """
-      self.freq = freq
-      self.samples = samples
-
-   def __str__(self):
-      """ Utility string function """
-      return "freq: " + str(self.freq) + " samples: " + str(self.samples)
-
-   def to_xml(self, doc):
-      """ Produces an EmotionML element """
-      trace = doc.createElement('trace')
-      trace.setAttribute('freq',str(self.freq))
-      trace.setAttribute('samples',','.join(map(str,self.samples)))
-      return trace
 
 class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
    emotions = []
    info = None
    version = "1.0"
+   category_set = None
+   dimension_set = None
+   appraisal_set = None
+   action_tendency_set = None
 
    def __init__(self):
       pass
@@ -58,63 +42,20 @@ class EmotionML:
       em = doc.createElement('emotionml')
       em.setAttribute("xmlns", "http://www.w3.org/2009/10/emotionml")
       em.setAttribute("version",self.version)
+      if self.category_set:
+         em.setAttribute("category-set",self.category_set)
+      if self.dimension_set:
+         em.setAttribute("dimension-set",self.dimension_set)
+      if self.appraisal_set:
+         em.setAttribute("appraisal-set",self.appraisal_set)
+      if self.action_tendency_set:
+         em.setAttribute("action-tendency-set",self.action_tendency_set)
+
       for emotion in self.emotions:
          em.appendChild(emotion.to_xml(doc))
       doc.appendChild(em)
       return doc
 
-class Info:
-   """ Info element <info>, structure is flexible and we represent its content 
-   as text """
-   #TODO: to be tested
-   content=None
-   id=None
-   def __init__(self,id=None):
-      if id:
-         self.id = id
-
-   def to_xml(self,doc):
-      """  Constructs <info> element with id attribute and text content """
-      info = doc.createElement('info')
-      info.setAttribute('id',self.id)
-      if self.content is not None and len(str(self.content).strip()) > 0:
-         info_text = doc.createTextNode(str(self.content))
-         info.appendChild(info_text)
-      return info
-
-class Reference:      
-   """Representation for the <reference> - attributes: uri required 
-   and optional: role and media-type. Role must be one of: 
-   expressedBy" (default), "experiencedBy", "triggeredBy", "targetedAt" """
-   uri=None
-   role='expressedBy'
-   media_type=None
-   roles = ('expressedBy', 'experiencedBy', 'triggeredBy', 'targetedAt')
-
-
-   def __init__(self, uri,role="expressedBy",media_type=None):
-      """ Intializes with uri and optionally role and media_type """
-      self.uri = uri
-      if role is not None:
-         self.role = role
-      if media_type is not None:
-         self.media_type = media_type
-
-   def __str__(self):
-      """ Utility string function """
-      return "uri: %s role: %s media-type: %s" % str(self.uri) % str(self.role) % str(self.media_type)
-
-   def to_xml(self, doc):
-      """ Produces a <reference> element """
-      ref = doc.createElement('reference')
-      ref.setAttribute('uri',str(self.uri))
-      if self.media_type:
-         ref.setAttribute('media-type',str(self.media_type))
-      if self.role in (self.roles): 
-         ref.setAttribute('role',self.role)
-      else:
-         raise TypeError( "role ("+self.role+") must be one of " + self.roles )
-      return ref
 
 class Emotion: 
    """ This element represents a single emotion annotation.
@@ -187,23 +128,25 @@ class Emotion:
    offset_to_start = None
    expressed_through = None
 
-   @staticmethod
-   def get_set( representations ):
-      representation_set = []
-      if representations:
-         representation_set = [set([representation.get_category() 
-            for representation in representations])]
-      return representations_set
 
    def to_xml(self, doc ):
       """ Creates EmotionML compliant Emotion element """
 
       emo = doc.createElement('emotion')
-
+      
+      #TODO: is this really true if it is already declared at the global level
       if not (self.categories or self.dimensions 
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
+      if self.category_set:
+         emo.setAttribute("category-set",self.category_set)
+      if self.dimension_set:
+         emo.setAttribute("dimension-set",self.dimension_set)
+      if self.appraisal_set:
+         emo.setAttribute("appraisal-set",self.appraisal_set)
+      if self.action_tendency_set:
+         emo.setAttribute("action-tendency-set",self.action_tendency_set)
 
       for child in (self.categories,self.dimensions,self.appraisals,
          self.action_tendencies):
@@ -229,9 +172,29 @@ class Emotion:
 
       return emo
 
-
 class Representation:
-   """ Class represents dimension, category, appraisal or action-tendency """
+   """ This class is an abstract representation (i.e. there is no such element 
+      as <representation> in EmotionML) of an emotion expressed through one of 
+      the four ways how emotion can be represented in EmotionML - 
+      dimension, category, appraisal or action-tendency.
+      To represent emotion using one of the four categories author of the document
+      will create an instance of the Representation class providing the 'representation'
+      value in the constructor. This value has to be one of the four categories.
+
+      The structure of the Representation and therefore dimension, category, appraisal
+      or action-tendency is:
+      Children <trace>: A representation MAY contain either a value 
+          attribute or a <trace> element.
+      Attributes  
+        Required:
+         name, the name of the representation, which MUST be contained in the declared 
+         category vocabulary (see below).
+       Optional:
+         value: A representation MAY contain either a value attribute 
+         or a <trace> element.
+         confidence, the annotator's confidence that the annotation 
+         given for this representation is correct.
+       """
    #TODO: write unit tests
    representations = ('dimension', 'category', 
       'appraisal', 'action-tendency')
@@ -286,15 +249,95 @@ class Representation:
 
       return repr
 
+
+class Info:
+   """ Info element <info>, structure is flexible and we represent its content 
+   as text """
+   #TODO: to be tested
+   content=None
+   id=None
+   def __init__(self,id=None):
+      if id:
+         self.id = id
+
+   def to_xml(self,doc):
+      """  Constructs <info> element with id attribute and text content """
+      info = doc.createElement('info')
+      info.setAttribute('id',self.id)
+      if self.content is not None and len(str(self.content).strip()) > 0:
+         info_text = doc.createTextNode(str(self.content))
+         info.appendChild(info_text)
+      return info
+
+
+class Trace:      
+   """Representation for the <trace> which captures the
+   time evolution of a dynamic scale value represented through frequency and samples"""
+   freq = None
+   samples = []
+
+   def __init__(self, freq, samples):
+      """ Intializes with both frequency of collection and samples """
+      self.freq = freq
+      self.samples = samples
+
+   def __str__(self):
+      """ Utility string function """
+      return "freq: " + str(self.freq) + " samples: " + str(self.samples)
+
+   def to_xml(self, doc):
+      """ Produces an EmotionML element """
+      trace = doc.createElement('trace')
+      trace.setAttribute('freq',str(self.freq))
+      trace.setAttribute('samples',','.join(map(str,self.samples)))
+      return trace
+
+class Reference:      
+   """Representation for the <reference> - attributes: uri required 
+   and optional: role and media-type. Role must be one of: 
+   expressedBy" (default), "experiencedBy", "triggeredBy", "targetedAt" """
+   uri=None
+   role='expressedBy'
+   media_type=None
+   roles = ('expressedBy', 'experiencedBy', 'triggeredBy', 'targetedAt')
+
+
+   def __init__(self, uri,role="expressedBy",media_type=None):
+      """ Intializes with uri and optionally role and media_type """
+      self.uri = uri
+      if role is not None:
+         self.role = role
+      if media_type is not None:
+         self.media_type = media_type
+
+   def __str__(self):
+      """ Utility string function """
+      return "uri: %s role: %s media-type: %s" % str(self.uri) % str(self.role) % str(self.media_type)
+
+   def to_xml(self, doc):
+      """ Produces a <reference> element """
+      ref = doc.createElement('reference')
+      ref.setAttribute('uri',str(self.uri))
+      if self.media_type:
+         ref.setAttribute('media-type',str(self.media_type))
+      if self.role in (self.roles): 
+         ref.setAttribute('role',self.role)
+      else:
+         raise TypeError( "role ("+self.role+") must be one of " + self.roles )
+      return ref
+
+
 def make_xml(emotions, vocabularies, attributes, info=None):
    ''' Makes an EmotionML compliant XML document
    '''
    emotionml = EmotionML()
+   emotionml.dimension_set="http://someurl/dim-set"
 
 
    emotion = Emotion()
 
    emotion.emotion_id = "test id"
+   emotion.action_tendency_set="http://someurl/action-tendency-set"
 
    rep = Representation(name='test',representation='action-tendency',
       value='0.5',confidence='1')
@@ -320,6 +363,8 @@ def make_xml(emotions, vocabularies, attributes, info=None):
    emotionml.emotions.append(emotion)
    print emotionml.to_xml().toprettyxml()
 
+   return emotionml.to_xml()
+
    #doc = xml.dom.minidom.Document()
    #emotionml = doc.createElement('emotionml')
    #doc.appendChild(emotionml)
@@ -338,4 +383,4 @@ def make_xml(emotions, vocabularies, attributes, info=None):
 
 
 if __name__ == '__main__':
-   print make_xml(None,None,None)
+   make_xml(None,None,None)
