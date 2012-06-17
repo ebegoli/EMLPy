@@ -167,6 +167,8 @@ class Emotion:
          emo.setAttribute('time-ref-anchor-point', str(self.time_ref_anchor_point))
       if self.offset_to_start:
          emo.setAttribute('offset-to-start', str(self.offset_to_start))
+      if self.expressed_through
+         emo.setAttribute('expressed-through', str(self.expressed_through))
       if self.info:
          emo.appendChild(self.info.to_xml(doc))
 
