@@ -148,6 +148,9 @@ class Emotion:
       if self.action_tendency_set:
          emo.setAttribute("action-tendency-set",self.action_tendency_set)
 
+      for reference in self.references:
+         emo.appendChild(reference.to_xml(doc))
+
       for child in (self.categories,self.dimensions,self.appraisals,
          self.action_tendencies):
          for item in child:
@@ -329,63 +332,3 @@ class Reference:
       else:
          raise TypeError( "role ("+self.role+") must be one of " + self.roles )
       return ref
-
-
-def make_xml(emotions, vocabularies, attributes, info=None):
-   ''' Makes an EmotionML compliant XML document
-   '''
-   emotionml = EmotionML()
-   emotionml.dimension_set="http://someurl/dim-set"
-
-
-   emotion = Emotion()
-
-   emotion.emotion_id = "test id"
-   emotion.expressed_through = "voice"
-   emotion.action_tendency_set="http://someurl/action-tendency-set"
-
-   rep = Representation(name='test',representation='action-tendency',
-      value='0.5',confidence='1')
-
-   print "Test representation:%s " % rep
-   #print rep.to_xml(emotionml.to_xml()).toprettyxml()
-
-   trace = Trace( "2", ('1.5','1.5','1.6')) 
-   #print trace.to_xml(emotionml.to_xml()).toprettyxml()
-
-   info = Info("some-id")
-   #print info.to_xml(emotionml.to_xml()).toprettyxml()
-
-   reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
-   #print reference.to_xml(emotionml.to_xml()).toprettyxml()
-
-   emotion.action_tendencies.append(rep)
-   emotion.info = info
-   emotion.references.append(reference)
-
-   #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
-
-   emotionml.emotions.append(emotion)
-   print emotionml.to_xml().toprettyxml()
-
-   return emotionml.to_xml()
-
-   #doc = xml.dom.minidom.Document()
-   #emotionml = doc.createElement('emotionml')
-   #doc.appendChild(emotionml)
-
-   #for emotion in emotions:
-   #   emotionml.appendChild( make_emotion( doc, emotion )
-
-   #for vocabulary in vocabularies:
-   #   emotionml.appendChild( make_vocabulary( doc, emotion ) 
-
-   #el = doc.createElementNS('http://example.net/ns', 'el')
-   #el.setAttribute("xmlns", "http://example.net/ns")
-   #doc.appendChild(el)
-   #retrun doc.toprettyxml()
-   #return doc
-
-
-if __name__ == '__main__':
-   make_xml(None,None,None)

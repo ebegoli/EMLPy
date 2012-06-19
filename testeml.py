@@ -53,12 +53,15 @@ class TestEmotionMLGeneration(unittest.TestCase):
 
         #check that first emotion has id "test id" 
         self.assertEqual( str(emotions[0].getAttribute("id")), "test id"  )
-        infos = dom3.getElementsByTagName("info")
 
         #check that info has id "some-id" 
+        infos = dom3.getElementsByTagName("info")
         self.assertEqual( str(infos[0].getAttribute("id")), "some-id"  )
 
 
+        #check that reference is present and that its role is "triggeredBy" 
+        references = dom3.getElementsByTagName("reference")
+        self.assertEqual( str(references[0].getAttribute("role")),"triggeredBy")
 
     def test_representation(self):
 
