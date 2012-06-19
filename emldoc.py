@@ -208,6 +208,8 @@ class Representation:
    confidence = None
 
    def __init__(self,name,representation, trace=None, value=None, confidence=None):
+      '''name is a given name for this representation and representation has to be 
+      one of 'dimension', 'category', 'appraisal', 'action-tendency' '''
       assert representation, 'name of representation is empty'
       assert representation in self.representations, 'name of representation:%s is not in\
        the list of representations' % str(self.representations)
