@@ -5,8 +5,6 @@ from emldoc import *
 
 class TestEmotionMLGeneration(unittest.TestCase):
 
-    def setUp(self):
-        self.seq = range(10)
 
     def test_trace(self):
         trace = Trace(5,[1,2,3])
@@ -88,6 +86,48 @@ class TestEmotionMLGeneration(unittest.TestCase):
         rep.name = 'anger'
         rep.confidence = '0.8'   
         rep = rep.to_xml(doc).toprettyxml()
+   
+    ##Chelsey's Testing Function
+    def test_emotionml(self):
+	eml= EmotionML()
+	#first emotion
+	emotion= Emotion()
+	emotion.emotion_id='fear'
+	
+	#category
+	rep=Representation(name='fear', representation='category', value='100', confidence='.8')
+	emotion.categories.append(rep)
+	
+	#dimension
+	rep=Representation(name="unpredictability", representation='dimension', confidence='.5', value='50')
+	emotion.dimensions.append(rep)
+	
+	#action-tendency
+	rep=Representation(name="avoidance", representation='action-tendency', confidence='.3', value='.4')
+	emotion.action_tendencies.append(rep)
+
+	#Appraisal
+	rep=Representation(name='unexpectedness', representation='appraisal', confidence='.2', value='90')
+	emotion.appraisals.append(rep)
+	eml.emotions.append(emotion)
+	
+	#Second Emotion
+	emotion2=Emotion()
+	emotion2.emotion_id="Happy"
+	
+	rep=Representation(name='happiness', representation='category', value='30')
+	emotion2.categories.append(rep)
+	eml.emotions.append(emotion2)
+
+
+	#Third Emotion
+	emotion3=Emotion()
+	emotion3.emotion_id="Confused"
+	
+	rep=Representation(name='confusion', representation='category', value='20')
+	emotion3.categories.append(rep)
+	eml.emotions.append(emotion3)
+	print eml.to_xml().toprettyxml()
 
 if __name__ == '__main__':
     unittest.main()
