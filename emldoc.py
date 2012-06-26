@@ -140,9 +140,15 @@ class Emotion:
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
-      if (self.category_set and self.dimension_set 
-         and self.appraisal_set and self.action_tendency_set):
-         raise ValueError('There can be only one vocabulary set specified per emotion')
+
+      sets=[] 
+      for value in (self.category_set,self.dimension_set,
+                    self.appraisal_set,self.action_tendency_set):
+         if value is not None:
+            sets += [value]
+
+      if  len(sets)> 1: 
+         raise ValueError('There can be only one vocabulary set specified per emotion. I see ' + str(sets) )
 
       if self.category_set:
          emo.setAttribute("category-set",self.category_set)
@@ -325,3 +331,36 @@ class Reference:
       else:
          raise TypeError( "role ("+self.role+") must be one of " + self.roles )
       return ref
+"""    
+if __name__ == "__main__":
+        emotionml = EmotionML()
+        emotionml.dimension_set="http://someurl/dim-set"
+        emotion = Emotion()
+
+        emotion.emotion_id = "test id"
+        emotion.expressed_through = "voice"
+        emotion.action_tendency_set="http://someurl/action-tendency-set"
+        emotion.dimension_set ="http://someurl/action-tendency-set"
+
+        rep = Representation(name='test',representation='action-tendency',
+        value='0.5',confidence='1')
+
+        trace = Trace( "2", ('1.5','1.5','1.6')) 
+
+        info = Info("some-id")
+
+        reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
+
+        emotion.action_tendencies.append(rep)
+        emotion.info = info
+        emotion.references.append(reference)
+
+        #just for control purposes
+        #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
+        
+        emotionml.emotions.append(emotion)
+
+
+        emxml = emotionml.to_xml().toprettyxml()
+        print emxml
+   """
