@@ -140,16 +140,6 @@ class Emotion:
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
-
-      sets=[] 
-      for value in (self.category_set,self.dimension_set,
-                    self.appraisal_set,self.action_tendency_set):
-         if value is not None:
-            sets += [value]
-
-      if  len(sets)> 1: 
-         raise ValueError('There can be only one vocabulary set specified per emotion. I see ' + str(sets) )
-
       if self.category_set:
          emo.setAttribute("category-set",self.category_set)
       if self.dimension_set:
