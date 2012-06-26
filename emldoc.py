@@ -26,16 +26,15 @@ import xml.dom.minidom
 
 class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
-   emotions = []
-   info = None
-   version = "1.0"
-   category_set = None
-   dimension_set = None
-   appraisal_set = None
-   action_tendency_set = None
 
    def __init__(self):
-      pass
+      self.emotions = []
+      self.info = None
+      self.version = "1.0"
+      self.category_set = None
+      self.dimension_set = None
+      self.appraisal_set = None
+      self.action_tendency_set = None
 
    def to_xml(self):
       doc = xml.dom.minidom.Document()
@@ -107,26 +106,28 @@ class Emotion:
 
    #TODO: figure out how to store sets
    # this cannot be list, but rather one per emotion
-   category_set = None
-   dimension_set = None
-   appraisal_set = None
-   action_tendency_set = None
-   
-   categories = []
-   dimensions = []
-   appraisals = []
-   action_tendencies = []
-   references = []
-   info = None
-   version = None
-   emotion_id = None
-   start = None
-   end = None
-   duration = None
-   time_ref_uri = None
-   time_ref_anchor_point = None
-   offset_to_start = None
-   expressed_through = None
+   def __init__(self):
+
+      self.category_set = None
+      self.dimension_set = None
+      self.appraisal_set = None
+      self.action_tendency_set = None
+      
+      self.categories = []
+      self.dimensions = []
+      self.appraisals = []
+      self.action_tendencies = []
+      self.references = []
+      self.info = None
+      self.version = None
+      self.emotion_id = None
+      self.start = None
+      self.end = None
+      self.duration = None
+      self.time_ref_uri = None
+      self.time_ref_anchor_point = None
+      self.offset_to_start = None
+      self.expressed_through = None
 
 
    def to_xml(self, doc ):
@@ -203,12 +204,6 @@ class Representation:
    #TODO: write unit tests
    representations = ('dimension', 'category', 
       'appraisal', 'action-tendency')
-   representation = None
-   category_ns = None
-   value = None
-   trace = None
-   repr_name = None
-   confidence = None
 
    def __init__(self,name,representation, trace=None, value=None, confidence=None):
       '''name is a given name for this representation and representation has to be 
@@ -260,10 +255,9 @@ class Representation:
 class Info:
    """ Info element <info>, structure is flexible and we represent its content 
    as text """
-   #TODO: to be tested
-   content=None
-   id=None
    def __init__(self,id=None):
+      self.content=None
+      self.id=None 
       if id:
          self.id = id
 
@@ -280,8 +274,6 @@ class Info:
 class Trace:      
    """Representation for the <trace> which captures the
    time evolution of a dynamic scale value represented through frequency and samples"""
-   freq = None
-   samples = []
 
    def __init__(self, freq, samples):
       """ Intializes with both frequency of collection and samples """
@@ -303,9 +295,6 @@ class Reference:
    """Representation for the <reference> - attributes: uri required 
    and optional: role and media-type. Role must be one of: 
    expressedBy" (default), "experiencedBy", "triggeredBy", "targetedAt" """
-   uri=None
-   role='expressedBy'
-   media_type=None
    roles = ('expressedBy', 'experiencedBy', 'triggeredBy', 'targetedAt')
 
 

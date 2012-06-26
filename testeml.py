@@ -5,15 +5,12 @@ from emldoc import *
 
 class TestEmotionMLGeneration(unittest.TestCase):
 
-    #skipping this one for the moment
-    @unittest.skip("skipping to test mine")
+
     def test_trace(self):
         trace = Trace(5,[1,2,3])
         doc = Document()
-        print trace.to_xml(doc).toprettyxml()
-    
-    #skipping this one for the moment
-    @unittest.skip("skipping to test mine")
+        #print trace.to_xml(doc).toprettyxml()
+
     def test_parse_emotionml(self):
         emotionml = EmotionML()
         emotionml.dimension_set="http://someurl/dim-set"
@@ -37,8 +34,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
         emotion.references.append(reference)
 
         #just for control purposes
-        print emotion.to_xml(emotionml.to_xml()).toprettyxml()
-
+        #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
+        
         emotionml.emotions.append(emotion)
 
 
@@ -63,19 +60,17 @@ class TestEmotionMLGeneration(unittest.TestCase):
         #check that reference is present and that its role is "triggeredBy" 
         references = dom3.getElementsByTagName("reference")
         self.assertEqual( str(references[0].getAttribute("role")),"triggeredBy")
-    #skipping this one for the moment
-    @unittest.skip("skipping to test mine")
+
     def test_representation(self):
 
         doc = Document() 
         rep = Representation('test dim 1','dimension')
         rep.value = '100'
         rep.name = 'aggitation'
-        rep.confidence = '0.5'   
-        print rep.to_xml(doc).toprettyxml()
+        rep.confidence = '0.5'
+        #print rep.to_xml(doc).toprettyxml()
         #TODO: parse back into XML and make sure 
-        # xml is well formed
-            
+        # xml is well formed    
         doc = Document() 
         rep = Representation('test dim 2','dimension')
         rep.value = '100'
@@ -85,13 +80,12 @@ class TestEmotionMLGeneration(unittest.TestCase):
         self.assertRaises(ValueError, rep.to_xml, doc)
 
         doc = Document() 
-        rep = Representation('test dim 3','dimension')
-        rep.trace = Trace(5,['0.5','0.6','0.7'])
-        rep.name = 'anger'
-        rep.confidence = '0.8'   
-        rep = rep.to_xml(doc).toprettyxml()
-   
-    ##Chelsey's Testing Function
+        trace = Trace(5,['0.5','0.6','0.7'])
+        rep = Representation(name='test dim 3',representation='dimension',
+                trace=trace,confidence='0.8')
+
+        rep = rep.to_xml(doc).toprettyxml() 
+
     def test_emotionml(self):
 	eml= EmotionML()
 	
@@ -125,7 +119,6 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	check= parseString(theEml)
 	self.assertTrue(len(check.getElementsByTagName("emotion"))==1)
 	self.assertTrue(len(check.getElementsByTagName("category"))==1)
-	
 
 	#Second Emotion
 	emotion2=Emotion()
@@ -139,7 +132,6 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	theEml=eml.to_xml().toprettyxml()
 	check= parseString(theEml)
 	self.assertTrue(len(check.getElementsByTagName("emotion"))==2)
-	print len(check.getElementsByTagName("category"))	
 	self.assertTrue(len(check.getElementsByTagName("category"))==2)
 	
 
@@ -150,11 +142,10 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation(name='confusion', representation='category', value='20')
 	emotion3.categories.append(rep)
 	eml.emotions.append(emotion3)
-	print eml.to_xml().toprettyxml()
-	
+
 	# Do some tests on the structure
 	theEml=eml.to_xml().toprettyxml()
 	check= parseString(theEml)
-	self.assertTrue(len(check.getElementsByTagName("emotion"))==3)
+	self.assertTrue(len(check.getElementsByTagName("emotion"))==3 )
 if __name__ == '__main__':
-    unittest.main()
+        unittest.main()
