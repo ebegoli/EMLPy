@@ -143,9 +143,94 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emotion3.categories.append(rep)
 	eml.emotions.append(emotion3)
 
-	# Do some tests on the structure
+	#Do some tests on the structure
 	theEml=eml.to_xml().toprettyxml()
 	check= parseString(theEml)
 	self.assertTrue(len(check.getElementsByTagName("emotion"))==3 )
+	print theEml
+    
+    #the following test cases are to check examples from the W3 site
+    def test_category(self):
+	
+	#create the emotionalml
+	emoML= EmotionML()
+
+	#add emotion
+	emo=Emotion()
+	rep=Representation(name='satisfaction', representation='category', value='1')
+	emo.categories.append(rep)
+	emoML.emotions.append(emo)
+	
+	#add another
+	emo=Emotion()
+	rep=Representation(name="distant", representation='category', value='1')
+	emo.categories.append(rep)
+	emoML.emotions.append(emo)
+	print emoML.to_xml().toprettyxml()
+
+    #Testing Dimension
+    def test_dimension(self):
+	
+	#create the emotionalml
+	emoML= EmotionML()
+	emo=Emotion()
+	rep=Representation(name='arousal', value="0.3", representation='dimension')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='pleasure', value="0.9", representation='dimension')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='dominance', value="0.8", representation='dimension')
+	emo.dimensions.append(rep)
+	emoML.emotions.append(emo)
+
+	emo=Emotion()
+	rep=Representation(name='friendliness', representation='dimension', value='0.2')
+	emo.dimensions.append(rep)
+	emoML.emotions.append(emo)
+	print emoML.to_xml().toprettyxml()
+
+    #Testing Appraisal
+    def test_appraisal(self):
+	
+	#create the emotionalml
+	emoML= EmotionML()
+	emo=Emotion()
+	rep=Representation(name="novelty", representation="appraisal", value='0.8')
+	emo.appraisals.append(rep)
+	
+	rep=Representation(name='intrinsic-pleasantness', value="0.2", representation='appraisal')
+	emo.appraisals.append(rep)
+	emoML.emotions.append(emo)
+	
+	emo=Emotion()
+	rep=Representation(name='likelihood', value="5.0", representation='appraisal')
+	emo.appraisals.append(rep)
+	emoML.emotions.append(emo)
+	print emoML.to_xml().toprettyxml()
+
+    #Testing Action-tendency
+    def test_actionTendency(self):
+	
+	#create the emotionalml
+	emoML= EmotionML()
+	emo=Emotion()
+	rep=Representation(name='approach', value="0.7", representation='action-tendency')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='being-with', value="0.8", representation='action-tendency')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='attending', representation='action-tendency', value='0.7')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='dominating', representation='action-tendency', value='0.7')
+	emo.dimensions.append(rep)
+
+	emoML.emotions.append(emo)
+	print emoML.to_xml().toprettyxml()
+
+	
+	
 if __name__ == '__main__':
         unittest.main()
