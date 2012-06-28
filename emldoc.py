@@ -23,7 +23,6 @@ __author__ = 'Edmon Begoli'
 import sys
 import xml.dom.minidom
 
-
 class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
 
@@ -103,9 +102,7 @@ class Emotion:
 
    See: http://www.w3.org/TR/emotionml/#s2.1.2
    """
-
-   #TODO: figure out how to store sets
-   # this cannot be list, but rather one per emotion
+   
    def __init__(self):
 
       self.category_set = None
@@ -201,7 +198,6 @@ class Representation:
          confidence, the annotator's confidence that the annotation 
          given for this representation is correct.
        """
-   #TODO: write unit tests
    representations = ('dimension', 'category', 
       'appraisal', 'action-tendency')
 
@@ -224,7 +220,6 @@ class Representation:
       return self.representation
 
    def __str__(self):
-      """ TODO: """
       return "representation:%s name:%s trace:%s value:%s confidence:%s" % \
       (self.representation, self.repr_name, self.trace, self.value, self.confidence)
      
@@ -232,11 +227,20 @@ class Representation:
       """ Creates EmotionML compliant representation """
 
       repr = doc.createElement( str(self.representation) )
+
+      if not self.repr_name:
+         raise ValueError('Name has to be provided for %s %s' % 
+            (str(self.representation), str(self.repr_name)) )
       repr.setAttribute('name',str(self.repr_name))
+
 
       if self.trace and self.value:
          raise ValueError('Only one of traces or value can be provided for ' +
             self.representation) 
+
+      if (self.representation == 'dimension' and not self.value): 
+         raise ValueError('No value provided for dimension' + self.repr_name)
+
       if not self.trace and not self.value:   
          raise ValueError('No trace nor value are provided for ' +
             self.representation) 
@@ -321,7 +325,10 @@ class Reference:
       else:
          raise TypeError( "role ("+self.role+") must be one of " + self.roles )
       return ref
-"""    
+
+def validate_dimension(dim):
+   if not (dim.value): 
+         raise ValueError('No trace nor value are provided for ' + dim.representation) 
 if __name__ == "__main__":
         emotionml = EmotionML()
         emotionml.dimension_set="http://someurl/dim-set"
@@ -353,4 +360,3 @@ if __name__ == "__main__":
 
         emxml = emotionml.to_xml().toprettyxml()
         print emxml
-   """
