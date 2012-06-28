@@ -68,7 +68,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
         rep.value = '100'
         rep.name = 'aggitation'
         rep.confidence = '0.5'
-        #print rep.to_xml(doc).toprettyxml()
+        print rep.to_xml(doc).toprettyxml()
         #TODO: parse back into XML and make sure 
         # xml is well formed    
         doc = Document() 
@@ -76,7 +76,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
         rep.value = '100'
         rep.trace = Trace(4,['0.5','0.6','0.7'])
         rep.name = 'happiness'
-        rep.confidence = '0.8'   
+        rep.confidence = '0.8'
+	#this should raise and error for having both trace and value   
         self.assertRaises(ValueError, rep.to_xml, doc)
 
         doc = Document() 
@@ -84,8 +85,57 @@ class TestEmotionMLGeneration(unittest.TestCase):
         rep = Representation(name='test dim 3',representation='dimension',
                 trace=trace,confidence='0.8')
 
-        rep = rep.to_xml(doc).toprettyxml() 
+        rep = rep.to_xml(doc).toprettyxml()
 
+    def test_categoryRepresentation(self):
+	doc= Document()
+	rep=Representation(name='satisfaction', representation='category', value='.4', confidence='.3')
+	rep = rep.to_xml(doc).toprettyxml()
+	
+	#this should pass, doesn't require value or trace
+	doc=Document() 
+	rep=Representation('satisfaction', 'category')
+	rep = rep.to_xml(doc).toprettyxml()
+
+	#this should fail for having both
+	doc= Document()
+	trace=Trace(2,[2,3,4,5])
+	rep=Representation('satisfaction', 'category', trace, '.4')
+	assertRaises(ValueError, rep.to_xml(doc), doc)
+
+    def test_appraisalRepresentation(self):
+	doc= Document()
+	rep=Representation(name='suddenness', representation='appraisal', value='.6', confidence='.1')
+	rep = rep.to_xml(doc).toprettyxml()
+	
+	#this should pass, doesn't require value or trace
+	doc=Document() 
+	rep=Representation('suddenness', 'appraisal')
+	rep = rep.to_xml(doc).toprettyxml()
+
+	#this should fail for having both
+	doc= Document()
+	trace=Trace(5,[9,8,7,6,5,4,3,2,1])
+	rep=Representation('suddenness', 'appraisal', trace, '.6')
+	assertRaises(ValueError, rep.to_xml(doc), doc)
+
+    def test_actTendRepresentation(self):
+	doc= Document()
+	rep=Representation(name='approach', representation='action-tendency', value='.7', confidence='.1')
+	rep = rep.to_xml(doc).toprettyxml()
+	
+	#this should pass, doesn't require value or trace
+	doc=Document() 
+	rep=Representation('approach', 'action-tendency')
+	rep = rep.to_xml(doc).toprettyxml()
+
+	#this should fail for having both
+	doc= Document()
+	trace=Trace(5,[.5,.7,.2])
+	rep=Representation('approach', 'action-tendency', trace, '.7')
+	assertRaises(ValueError, rep.to_xml(doc), doc)
+
+    
     def test_emotionml(self):
 	eml= EmotionML()
 	
@@ -119,6 +169,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	check= parseString(theEml)
 	self.assertTrue(len(check.getElementsByTagName("emotion"))==1)
 	self.assertTrue(len(check.getElementsByTagName("category"))==1)
+	self.assertTrue(len(check.getElementsByTagName("action-tendency"))==1)
+	self.assertTrue(len(check.getElementsByTagName("appraisal"))==1)
 
 	#Second Emotion
 	emotion2=Emotion()
@@ -147,7 +199,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	theEml=eml.to_xml().toprettyxml()
 	check= parseString(theEml)
 	self.assertTrue(len(check.getElementsByTagName("emotion"))==3 )
-	print theEml
+	self.assertTrue(len(check.getElementsByTagName("category"))==3)
+	#print theEml
     
     #the following test cases are to check examples from the W3 site
     def test_category(self):
@@ -166,7 +219,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation(name="distant", representation='category', value='1')
 	emo.categories.append(rep)
 	emoML.emotions.append(emo)
-	print emoML.to_xml().toprettyxml()
+	#print emoML.to_xml().toprettyxml()
 
     #Testing Dimension
     def test_dimension(self):
@@ -188,7 +241,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation(name='friendliness', representation='dimension', value='0.2')
 	emo.dimensions.append(rep)
 	emoML.emotions.append(emo)
-	print emoML.to_xml().toprettyxml()
+	#print emoML.to_xml().toprettyxml()
 
     #Testing Appraisal
     def test_appraisal(self):
@@ -207,7 +260,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation(name='likelihood', value="5.0", representation='appraisal')
 	emo.appraisals.append(rep)
 	emoML.emotions.append(emo)
-	print emoML.to_xml().toprettyxml()
+	#print emoML.to_xml().toprettyxml()
 
     #Testing Action-tendency
     def test_actionTendency(self):
@@ -228,8 +281,18 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emo.dimensions.append(rep)
 
 	emoML.emotions.append(emo)
-	print emoML.to_xml().toprettyxml()
+	#print emoML.to_xml().toprettyxml()
 
+    def test_vocabulary(self):
+	emoML= EmotionML()
+	emoML.category_set="http://www.w3.org/TR/emotion-voc/xml#everyday-categories"
+	
+	emotion=Emotion()
+	emotion.dimension_set="http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
+	rep=Representation(name='pleasure', representation='dimension', value='0.5')
+	emotion.dimensions.append(rep)
+	emoML.emotions.append(emotion)
+	#print emoML.to_xml().toprettyxml()
 	
 	
 if __name__ == '__main__':
