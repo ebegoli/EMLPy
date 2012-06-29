@@ -91,16 +91,12 @@ class TestEmotionMLGeneration(unittest.TestCase):
         rep.value = '100'
         rep.name = 'aggitation'
         rep.confidence = '0.5'
-        print rep.to_xml(doc).toprettyxml()
-        #TODO: parse back into XML and make sure 
-        # xml is well formed    
         doc = Document() 
         rep = Representation('test dim 2','dimension')
         rep.value = '100'
         rep.trace = Trace(4,['0.5','0.6','0.7'])
         rep.name = 'happiness'
         rep.confidence = '0.8'
-	#this should raise and error for having both trace and value   
         self.assertRaises(ValueError, rep.to_xml, doc)
 
         doc = Document() 
@@ -124,7 +120,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	doc= Document()
 	trace=Trace(2,[2,3,4,5])
 	rep=Representation('satisfaction', 'category', trace, '.4')
-	assertRaises(ValueError, rep.to_xml(doc), doc)
+	self.assertRaises(ValueError, rep.to_xml, doc)
 
    def test_appraisalRepresentation(self):
 	doc= Document()
@@ -140,7 +136,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	doc= Document()
 	trace=Trace(5,[9,8,7,6,5,4,3,2,1])
 	rep=Representation('suddenness', 'appraisal', trace, '.6')
-	assertRaises(ValueError, rep.to_xml(doc), doc)
+	self.assertRaises(ValueError, rep.to_xml, doc)
 
    def test_actTendRepresentation(self):
 	doc= Document()
@@ -156,7 +152,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	doc= Document()
 	trace=Trace(5,[.5,.7,.2])
 	rep=Representation('approach', 'action-tendency', trace, '.7')
-	assertRaises(ValueError, rep.to_xml(doc), doc)
+	self.assertRaises(ValueError, rep.to_xml, doc)
 
     
    def test_emotionml(self):
