@@ -1,17 +1,40 @@
 
+#!/usr/bin/env python
+''' 
+Copyright 2012 Edmon Begoli
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+'''
+'''
+An EmotionML document generator
+'''
+
+__author__ = 'Edmon Begoli'
+__author__ = 'Chelsey Dunivan'
+
 import unittest
 from xml.dom.minidom import Document, parseString
 from emldoc import *
 
 class TestEmotionMLGeneration(unittest.TestCase):
-
-
-    def test_trace(self):
+   """ Unit test for set of EmotionML generators defined in emldoc."""
+   
+   def test_trace(self):
         trace = Trace(5,[1,2,3])
         doc = Document()
         #print trace.to_xml(doc).toprettyxml()
 
-    def test_parse_emotionml(self):
+   def test_parse_emotionml(self):
         emotionml = EmotionML()
         emotionml.dimension_set="http://someurl/dim-set"
         emotion = Emotion()
@@ -61,7 +84,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
         references = dom3.getElementsByTagName("reference")
         self.assertEqual( str(references[0].getAttribute("role")),"triggeredBy")
 
-    def test_representation(self):
+   def test_representation(self):
 
         doc = Document() 
         rep = Representation('test dim 1','dimension')
@@ -87,7 +110,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 
         rep = rep.to_xml(doc).toprettyxml()
 
-    def test_categoryRepresentation(self):
+   def test_categoryRepresentation(self):
 	doc= Document()
 	rep=Representation(name='satisfaction', representation='category', value='.4', confidence='.3')
 	rep = rep.to_xml(doc).toprettyxml()
@@ -103,7 +126,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation('satisfaction', 'category', trace, '.4')
 	assertRaises(ValueError, rep.to_xml(doc), doc)
 
-    def test_appraisalRepresentation(self):
+   def test_appraisalRepresentation(self):
 	doc= Document()
 	rep=Representation(name='suddenness', representation='appraisal', value='.6', confidence='.1')
 	rep = rep.to_xml(doc).toprettyxml()
@@ -119,7 +142,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation('suddenness', 'appraisal', trace, '.6')
 	assertRaises(ValueError, rep.to_xml(doc), doc)
 
-    def test_actTendRepresentation(self):
+   def test_actTendRepresentation(self):
 	doc= Document()
 	rep=Representation(name='approach', representation='action-tendency', value='.7', confidence='.1')
 	rep = rep.to_xml(doc).toprettyxml()
@@ -136,7 +159,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	assertRaises(ValueError, rep.to_xml(doc), doc)
 
     
-    def test_emotionml(self):
+   def test_emotionml(self):
 	eml= EmotionML()
 	
 	#check there's nothing in it
@@ -202,8 +225,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	self.assertTrue(len(check.getElementsByTagName("category"))==3)
 	#print theEml
     
-    #the following test cases are to check examples from the W3 site
-    def test_category(self):
+   #the following test cases are to check examples from the W3 site
+   def test_category(self):
 	
 	#create the emotionalml
 	emoML= EmotionML()
@@ -221,8 +244,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emoML.emotions.append(emo)
 	#print emoML.to_xml().toprettyxml()
 
-    #Testing Dimension
-    def test_dimension(self):
+   #Testing Dimension
+   def test_dimension(self):
 	
 	#create the emotionalml
 	emoML= EmotionML()
@@ -243,8 +266,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emoML.emotions.append(emo)
 	#print emoML.to_xml().toprettyxml()
 
-    #Testing Appraisal
-    def test_appraisal(self):
+   #Testing Appraisal
+   def test_appraisal(self):
 	
 	#create the emotionalml
 	emoML= EmotionML()
@@ -262,8 +285,8 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emoML.emotions.append(emo)
 	#print emoML.to_xml().toprettyxml()
 
-    #Testing Action-tendency
-    def test_actionTendency(self):
+   #Testing Action-tendency
+   def test_actionTendency(self):
 	
 	#create the emotionalml
 	emoML= EmotionML()
@@ -283,7 +306,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emoML.emotions.append(emo)
 	#print emoML.to_xml().toprettyxml()
 
-    def test_vocabulary(self):
+   def test_vocabulary(self):
 	emoML= EmotionML()
 	emoML.category_set="http://www.w3.org/TR/emotion-voc/xml#everyday-categories"
 	

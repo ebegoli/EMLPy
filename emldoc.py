@@ -225,6 +225,10 @@ class Representation:
      
    def to_xml(self, doc):
       """ Creates EmotionML compliant representation """
+      #TODO: validate that if the <category> element is used, a category 
+      # vocabulary MUST be declared (see <emotion> and <emotionml>), 
+      # and the category name as given in the name attribute 
+      # MUST be an item in the declared category vocabulary.
 
       repr = doc.createElement( str(self.representation) )
 
@@ -233,17 +237,12 @@ class Representation:
             (str(self.representation), str(self.repr_name)) )
       repr.setAttribute('name',str(self.repr_name))
 
+      if self.representation == 'dimension':
+         if not self.value and not self.trace:
+            raise ValueError('Either trace or value has to be provided for dimension ' + self.repr_name)
 
-      if self.trace and self.value:
-         raise ValueError('Only one of traces or value can be provided for ' +
-            self.representation) 
-
-      if (self.representation == 'dimension' and not self.value): 
-         raise ValueError('No value provided for dimension' + self.repr_name)
-
-      if not self.trace and not self.value:   
-         raise ValueError('No trace nor value are provided for ' +
-            self.representation) 
+      if self.value and self.trace:
+            raise ValueError('Trace and value cannot be both provided for ' + self.repr_name)
 
       if self.trace:
             repr.appendChild(self.trace.to_xml(doc))
