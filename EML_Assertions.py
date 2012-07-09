@@ -179,47 +179,8 @@ class TestEMLAssertions(unittest.TestCase):
 
 		self.assertEqual(len(doc.getElementsByTagName('action-tendency')), 2, printOutcome('153', 'fail', 'The <emotion> element cannot contain one or more <action-tendency> elements.'))
 		print printOutcome('153', 'pass', 'The <emotion> element  contains one or more <action-tendency> elements.')
-#TODO
-	'''
-	def test_113(self):
-	def test_114(self):
-	'''
+
 	
-	def test_115(self):
-		eml=EmotionML()
-		eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertTrue(doc.documentElement.getAttribute('dimension-set'), printOutcome('115', 'fail', 'The <emotionml> element cannot contain an attribute "dimension-set".'))
-		print printOutcome('115', 'pass', 'The <emotionml> element MAY contain an attribute "dimension-set".')
-
-	#TODO
-	'''
-	def test_116(self):
-	def test_117(self):
-	'''
-
-	def test_118(self):
-		eml= EmotionML()
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertTrue(doc.documentElement.getAttribute('appraisal-set'), printOutcome("118", 'fail', 'The <emotionml> element cannot contain an attribute "appraisal-set".'))
-		print printOutcome("118", 'pass', 'The <emotionml> element  MAY contain an attribute "appraisal-set".')
-
-	#TODO
-	'''
-	def test_119(self):
-	def test_120(self):
-	'''
-	
-	def test_121(self):
-		eml=EmotionML()
-		eml.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertTrue(doc.documentElement.getAttribute('action-tendency-set'), printOutcome('121', 'fail', 'The <emotionml> element cannot contain an attribute "action-tendency-set".'))
-		print printOutcome('121', 'pass', 'The <emotionml> element MAY contain an attribute "action-tendency-set".')
 
 	def test_154(self):
 		eml=EmotionML()
@@ -246,48 +207,9 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.info=info
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
 		self.assertTrue(doc.getElementsByTagName('info'), printOutcome('155', 'fail', 'The <emotion> element MAY contain a single <info> element.'))
-		print printOutcome('155', 'pass', 'The <emotion> element MAY contain a single <info> element.')#TODO
-	'''
-	def test_113(self):
-	def test_114(self):
-	'''
-	
-	def test_115(self):
-		eml=EmotionML()
-		eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertTrue(doc.documentElement.getAttribute('dimension-set'), printOutcome('115', 'fail', 'The <emotionml> element cannot contain an attribute "dimension-set".'))
-		print printOutcome('115', 'pass', 'The <emotionml> element MAY contain an attribute "dimension-set".')
-
-	#TODO
-	'''
-	def test_116(self):
-	def test_117(self):
-	'''
-
-	def test_118(self):
-		eml= EmotionML()
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertTrue(doc.documentElement.getAttribute('appraisal-set'), printOutcome("118", 'fail', 'The <emotionml> element cannot contain an attribute "appraisal-set".'))
-		print printOutcome("118", 'pass', 'The <emotionml> element  MAY contain an attribute "appraisal-set".')
-
-	#TODO
-	'''
-	def test_119(self):
-	def test_120(self):
-	'''
-	
-	def test_121(self):
-		eml=EmotionML()
-		eml.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertTrue(doc.documentElement.getAttribute('action-tendency-set'), printOutcome('121', 'fail', 'The <emotionml> element cannot contain an attribute "action-tendency-set".'))
-		print printOutcome('121', 'pass', 'The <emotionml> element MAY contain an attribute "action-tendency-set".')
+		print printOutcome('155', 'pass', 'The <emotion> element MAY contain a single <info> element.')
 
 
 	#TODO Need help with this
@@ -407,9 +329,6 @@ class TestEMLAssertions(unittest.TestCase):
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
-		#print '*****************************************'
-		#print emxml
-		#print '*****************************************'
 		emotions=doc.getElementsByTagName('emotion')
 		self.assertEqual(emotions[0].getAttribute('version'), "1.0", printOutcome('172', 'fail', "The 'version' attribute of <emotion> doesn't have the value '1.0'."))
 		print printOutcome("172","pass",'The "version" attribute of <emotion> has the value "1.0".')
@@ -420,12 +339,9 @@ class TestEMLAssertions(unittest.TestCase):
 		rep=Representation('anger', 'category')
 		emo.categories.append(rep)
 		#I don't know what this is supposed to look like!
-		emo.emotion_id='xsd:Angry'
+		emo.emotion_id='Angry'
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
-		#print '*****************************************'
-		#print emxml
-		#print '*****************************************'
 		doc=parseString(emxml)
 		emotions=doc.getElementsByTagName('emotion')
 		self.assertTrue(emotions[0].getAttribute('id'), printOutcome('173', 'fail',"The <emotion> element can't contain an attribute 'id'."))
@@ -529,6 +445,429 @@ class TestEMLAssertions(unittest.TestCase):
 	
 	#TODO
 	'''def test_182(self):'''
+	#TODO need help!
+	'''
+	def test_210(self):
+		eml= EmotionML()
+		emo= Emotion()
+		eml.category_set="http://www.w3.org/TR/emotion-voc/xml#occ-categories"
+		#emo.category_set="http://www.w3.org/TR/emotion-voc/xml#everyday-categories"
+		#rep=Representation('anger', 'category')
+		#emo.categories.append(rep)
+		#eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		emotions= doc.getElementsByTagName('emotion')
+		self.assertTrue((doc.documentElement.getAttribute('category-set')) or (), printOutcome("210", 'fail', 'If the <category> element is used, a category vocabulary MUST be declared using a "category-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
+		print printOutcome("210", 'pass', 'If the <category> element is used, a category vocabulary MUST be declared using a "category-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')'''
+
+	def test_211(self):
+		eml= EmotionML()
+		eml.category_set="http://www.w3.org/TR/emotion-voc/xml#occ-categories"
+		try:
+			emo= Emotion()
+			rep=Representation(representation='category', value='.5')
+			emo.categories.append(rep)
+			eml.emotions.append(emo)
+		except:
+			pass
+		emo=Emotion()
+		rep=Representation('anger', 'category')
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		categories= doc.getElementsByTagName('category')
+		self.assertTrue(categories[0].getAttribute('name'), printOutcome("211", 'fail', 'A <category> element does not contain a "name" attribute.'))
+		print printOutcome("211", 'pass', 'A <category> element contains a "name" attribute.')
+	
+	#TODO
+	'''
+	def test_212(self):
+	def test_213(self):
+	''' 
+
+	def test_214(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='anger', representation='category', value='.5')
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		categories= doc.getElementsByTagName('category')
+		self.assertTrue(categories[0].getAttribute('value'), printOutcome("214", 'fail', 'A <category> can not contain a "value" attribute.'))
+		print printOutcome("214", 'pass', 'A <category> MAY contain a "value" attribute.')
+	
+	def test_215(self):
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace(100, [.2, .4, .6])
+		rep=Representation('worried', 'category', trace)
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("215", 'fail', 'A <category> can not contain a <trace> element.'))
+		print printOutcome("215", 'pass', 'A <category> MAY contain a <trace> element.')
+
+	#TODO
+	#need help with this as in 156
+	def test_216(self):
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace(50, [.8, .4, .2])
+		rep=Representation(name='interested',representation= 'category', trace=trace, value= .5 )
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("216", 'fail', 'A <category> can contain both a "value" attribute and a <trace> element.'))
+		print printOutcome("216", 'pass', 'A <category> cannot contain both a "value" attribute and a <trace> element.')
+
+	def test_217(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='interested',representation= 'category', value= .5 , confidence= .8 )
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		categories= doc.getElementsByTagName('category')
+		self.assertTrue(categories[0].hasAttribute('confidence'), printOutcome("217", 'fail', 'A <category> element cannot contain a "confidence" attribute.'))
+		print printOutcome("217", 'pass', 'A <category> element MAY contain a "confidence" attribute.')
+
+	#TODO need help!
+	'''
+	def test_220(self):
+		eml= EmotionML()
+		emo= Emotion()
+		eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
+		#emo.dimension_set="http://www.w3.org/TR/emotion-voc/xml#fsre-dimensions"
+		#rep=Representation('valence', 'dimension')
+		#emo.dimensions.append(rep)
+		#eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		emotions= doc.getElementsByTagName('emotion')
+		self.assertTrue((doc.documentElement.getAttribute('dimension-set')) or (), printOutcome("210", 'fail', 'If the <dimension> element is used, a dimension vocabulary MUST be declared using a "dimension-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
+		print printOutcome("210", 'pass', 'If the <dimension> element is used, a dimension vocabulary MUST be declared using a "dimension-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')'''
+
+	def test_221(self):
+		eml= EmotionML()
+		eml.category_set="http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
+		try:
+			emo= Emotion()
+			rep=Representation(representation='dimension', value='.5')
+			emo.dimensions.append(rep)
+			eml.emotions.append(emo)
+		except:
+			pass
+		emo=Emotion()
+		trace=Trace(50, [.8, .4, .2])
+		rep=Representation('valence', 'dimension', trace)
+		emo.dimensions.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		dimensions= doc.getElementsByTagName('dimension')
+		self.assertTrue(dimensions[0].getAttribute('name'), printOutcome("221", 'fail', 'A dimension element does not contain a "name" attribute.'))
+		print printOutcome("221", 'pass', 'A dimension element contains a "name" attribute.')
+	
+	#TODO
+	'''
+	def test_222(self):
+	def test_223(self):
+	''' 
+
+	#TODO
+	#need help with this as in 156
+	def test_224(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation('arousal','dimension')
+		emo.dimensions.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(assertRaises(ValueError), printOutcome("224", 'fail', 'A <dimension> does not contain either a "value" attribute or a <trace> element.'))
+		print printOutcome("224", 'pass', 'A <dimension> MUST contain either a "value" attribute or a <trace> element.')
+
+	def test_225(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='pleasure',representation= 'dimension', value= .5 , confidence= .8 )
+		emo.dimensions.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		dimensions= doc.getElementsByTagName('dimension')
+		self.assertTrue(dimensions[0].hasAttribute('confidence'), printOutcome("225", 'fail', 'A <dimension> element cannot contain a "confidence" attribute.'))
+		print printOutcome("225", 'pass', 'A <dimension> element MAY contain a "confidence" attribute.')
+
+	#TODO need help!
+	'''
+	def test_230(self):
+		eml= EmotionML()
+		emo= Emotion()
+		eml.appraisal_set="http://www.w3.org/TR/emotion-voc/xml#ema-appraisals"
+		#emo.appraisal_set="http://www.w3.org/TR/emotion-voc/xml#scherer-appraisals"
+		#rep=Representation('suddenness', 'appraisal')
+		#emo.appraisals.append(rep)
+		#eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		emotions= doc.getElementsByTagName('emotion')
+		self.assertTrue((doc.documentElement.getAttribute('appraisal-set')) or (), printOutcome("230", 'fail', 'If the <appraisal> element is used, an appraisal vocabulary MUST be declared using an "appraisal-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
+		print printOutcome("230", 'pass', 'If the <appraisal> element is used, an appraisal vocabulary MUST be declared using an "appraisal-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')'''
+
+	def test_231(self):
+		eml= EmotionML()
+		eml.appraisal_set="http://www.w3.org/TR/emotion-voc/xml#occ-categories"
+		try:
+			emo= Emotion()
+			rep=Representation(representation='appraisal', value='.9')
+			emo.categories.append(rep)
+			eml.emotions.append(emo)
+		except:
+			#we expect it to enter here for throwing an exception for not having a name
+			pass
+		emo=Emotion()
+		rep=Representation('urgency', 'appraisal')
+		emo.appraisals.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		appraisals= doc.getElementsByTagName('appraisal')
+		self.assertTrue(appraisals[0].getAttribute('name'), printOutcome("231", 'fail', 'An appraisal element does not contain a "name" attribute.'))
+		print printOutcome("231", 'pass', 'An appraisal element contains a "name" attribute.')
+	
+	#TODO
+	'''
+	def test_232(self):
+	def test_233(self):
+	''' 
+
+	def test_234(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='power', representation='appraisal', value='.5')
+		emo.appraisals.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		appraisals= doc.getElementsByTagName('appraisal')
+		self.assertTrue(appraisals[0].getAttribute('value'), printOutcome("234", 'fail', 'A <appraisal> can not contain a "value" attribute.'))
+		print printOutcome("234", 'pass', 'A <appraisal> MAY contain a "value" attribute.')
+	
+	def test_235(self):
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace(90, [.6, .4, .8])
+		rep=Representation('power', 'appraisal', trace)
+		emo.appraisals.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("235", 'fail', 'A <appraisal> can not contain a <trace> element.'))
+		print printOutcome("235", 'pass', 'A <appraisal> MAY contain a <trace> element.')
+
+	#TODO
+	#need help with this as in 156
+	def test_236(self):
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace(50, [.8, .4, .2])
+		rep=Representation(name='control',representation= 'appraisal', trace=trace, value= .5 )
+		emo.appraisals.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("236", 'fail', 'A <appraisal> can contain both a "value" attribute and a <trace> element.'))
+		print printOutcome("236", 'pass', 'A <appraisal> cannot contain both a "value" attribute and a <trace> element.')
+
+	def test_237(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='control',representation= 'appraisal', value= .5 , confidence= .8 )
+		emo.appraisals.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		appraisals= doc.getElementsByTagName('appraisal')
+		self.assertTrue(appraisals[0].hasAttribute('confidence'), printOutcome("237", 'fail', 'A <appraisal> element cannot contain a "confidence" attribute.'))
+		print printOutcome("237", 'pass', 'A <appraisal> element MAY contain a "confidence" attribute.')
+
+	#TODO need help!
+	'''
+	def test_240(self):
+		eml= EmotionML()
+		emo= Emotion()
+		eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
+		#emo.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
+		#rep=Representation('attending', 'action-tendency')
+		#emo.action_tendencies.append(rep)
+		#eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		at= doc.getElementsByTagName('action-tendency')
+		self.assertTrue((doc.documentElement.getAttribute('action-tendency-set')) or (), printOutcome("240", 'fail', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
+		print printOutcome("240", 'pass', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')'''
+
+	def test_241(self):
+		eml= EmotionML()
+		eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
+		try:
+			emo= Emotion()
+			rep=Representation(representation='action-tendency', value='.9')
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+		except:
+			#we expect it to enter here for throwing an exception for not having a name
+			pass
+		emo=Emotion()
+		rep=Representation('nonattending', 'action-tendency')
+		emo.appraisals.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		action_tendencies= doc.getElementsByTagName('action-tendency')
+		self.assertTrue(action_tendencies[0].getAttribute('name'), printOutcome("241", 'fail', 'An action-tendency element does not contain a "name" attribute.'))
+		print printOutcome("241", 'pass', 'An action-tendency element contains a "name" attribute.')
+	
+	#TODO
+	'''
+	def test_242(self):
+	def test_243(self):
+	''' 
+
+	def test_244(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='nonattending', representation='action-tendency', value='.9')
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		AT= doc.getElementsByTagName('action-tendency')
+		self.assertTrue(AT[0].getAttribute('value'), printOutcome("244", 'fail', 'A <action-tendency> can not contain a "value" attribute.'))
+		print printOutcome("244", 'pass', 'A <action-tendency> MAY contain a "value" attribute.')
+	
+	def test_245(self):
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace(90, [.6, .4, .8])
+		rep=Representation('power', 'action-tendency', trace)
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("245", 'fail', 'A <action-tendency> can not contain a <trace> element.'))
+		print printOutcome("245", 'pass', 'A <action-tendencyl> MAY contain a <trace> element.')
+
+	#TODO
+	#need help with this as in 156
+	def test_246(self):
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace(50, [.8, .4, .2])
+		rep=Representation(name='approach',representation= 'action-tendency', trace=trace, value= .5 )
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("246", 'fail', 'A <action-tendency> can contain both a "value" attribute and a <trace> element.'))
+		print printOutcome("246", 'pass', 'A <action-tendency> cannot contain both a "value" attribute and a <trace> element.')
+
+	def test_237(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='agonistic',representation= 'action-tendency', value= .7 , confidence= .2 )
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		AT= doc.getElementsByTagName('action-tendency')
+		self.assertTrue(AT[0].hasAttribute('confidence'), printOutcome("247", 'fail', 'A <action-tendency> element cannot contain a "confidence" attribute.'))
+		print printOutcome("247", 'pass', 'A <action-tendency> element MAY contain a "confidence" attribute.')
+	
+	#need to modify the assert statement once check implemented
+	def test_300(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='bored', representation='category', value=.8 , confidence=5)
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc= parseString(emxml)
+		categories= doc.getElementsByTagName('category')
+		self.assertTrue((float(categories[0].getAttribute('confidence'))>=0) and (float(categories[0].getAttribute('confidence'))<=1), printOutcome("500", "fail", "The value of the 'confidence' attribute MUST be a floating point number in the closed interval [0, 1]."))
+		print printOutcome("300", "pass", "The value of the 'confidence' attribute must be in the closed interval [0, 1].")
+	
+	'''def test_301(self):
+	def test_302(self):
+	def test_303(self):
+	def test_304(self):'''
+
+	def test_305(self):
+		eml=EmotionML()
+		info= Info('information')
+		eml.info=info
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		node=doc.getElementsByTagName('info')
+		self.assertTrue(node[0].getAttribute('id'), printOutcome('305', 'fail', 'The <info> element MAY contain an attribute "id".'))
+		print printOutcome("305","pass","The <info> element MAY contain an attribute 'id'.")
+		
+	'''def test_306(self):
+	def test_410(self):
+	def test_411(self):
+	def test_412(self):
+	def test_413(self):
+	def test_414(self):
+	def test_415(self):
+	def test_416(self):
+	def test_417(self):
+	def test_420(self):
+	def test_421(self):
+	def test_422(self):
+	def test_423(self):
+	def test_424(self):
+	def test_425(self):
+	'''
+
+	#need to modify the assert statement once check implemented
+	def test_500(self):
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation(name='bored', representation='category', value=10)
+		emo.categories.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc= parseString(emxml)
+		categories= doc.getElementsByTagName('category')
+		self.assertTrue((float(categories[0].getAttribute('value'))>=0) and (float(categories[0].getAttribute('value'))<=1), printOutcome("500", "fail", "The value of a 'value' attribute, if present, MUST be a floating point value from the closed interval [0, 1]."))
+		print printOutcome("500", "pass", 'The value of a "value" attribute, if present, MUST be a floating point value from the closed interval [0, 1].')
+	'''
+	def test_501(self):
+	def test_502(self):
+	def test_503(self):
+	def test_504(self):
+	def test_600(self):
+	def test_601(self):
+	def test_602(self):
+	def test_603(self):
+	def test_604(self):
+	def test_605(self):
+	def test_606(self):
+	def test_607(self):
+	def test_608(self):
+	def test_700(self):'''
+		
+
+
+
+
 
 
 	
