@@ -246,7 +246,6 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.info=info
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
 		self.assertTrue(doc.getElementsByTagName('info'), printOutcome('155', 'fail', 'The <emotion> element MAY contain a single <info> element.'))
 		print printOutcome('155', 'pass', 'The <emotion> element MAY contain a single <info> element.')#TODO
 	'''

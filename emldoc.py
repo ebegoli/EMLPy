@@ -137,6 +137,8 @@ class Emotion:
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
+      if self.version:
+        emo.setAttribute("version",self.version)
       if self.category_set:
          emo.setAttribute("category-set",self.category_set)
       if self.dimension_set:
@@ -268,7 +270,7 @@ class Info:
       """  Constructs <info> element with id attribute and text content """
       info = doc.createElement('info')
       info.setAttribute('id',self.id)
-      if self.content is not None and len(str(self.content).strip()) > 0:
+      if self.content and len(str(self.content).strip()) > 0:
          info_text = doc.createTextNode(str(self.content))
          info.appendChild(info_text)
       return info
@@ -306,8 +308,7 @@ class Reference:
       self.uri = uri
       if role is not None:
          self.role = role
-      if media_type is not None:
-         self.media_type = media_type
+      self.media_type = media_type
 
    def __str__(self):
       """ Utility string function """
