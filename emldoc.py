@@ -248,11 +248,17 @@ class Representation:
 
       if self.trace:
             repr.appendChild(self.trace.to_xml(doc))
-      else:
-         repr.setAttribute('value',str(self.value))
+      elif self.value:
+         if float(str(self.value)) > 1.0 or float(str(self.value)) < 0.0:
+            raise ValueError('Value has to be within closed [0,1] interval instead of ' + str(self.value))
+         else:
+            repr.setAttribute('value',str(self.value))
 
       if self.confidence:
-         repr.setAttribute('confidence',str(self.confidence))   
+         if float(str(self.confidence)) > 1.0 or float(str(self.confidence)) < 0.0:
+            raise ValueError('Confidence has to be within closed [0,1] interval instead of ' + str(self.confidence))
+         else:
+            repr.setAttribute('confidence',str(self.confidence))   
 
       return repr
 
