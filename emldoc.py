@@ -326,10 +326,12 @@ class Reference:
       ref.setAttribute('uri',str(self.uri))
       if self.media_type:
          ref.setAttribute('media-type',str(self.media_type))
-      if self.role in (self.roles): 
-         ref.setAttribute('role',self.role)
-      else:
-         raise TypeError( "role ("+self.role+") must be one of " + self.roles )
+      #if role is set, make sure it is one of accepted values
+      if self.role:
+         if self.role in (self.roles):
+            ref.setAttribute('role',self.role)
+         else:
+            raise TypeError( "role ("+self.role+") must be one of " + self.roles )
       return ref
 
 def validate_dimension(dim):
