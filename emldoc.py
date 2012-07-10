@@ -39,7 +39,7 @@ class EmotionML:
       doc = xml.dom.minidom.Document()
       em = doc.createElement('emotionml')
       em.setAttribute("xmlns", "http://www.w3.org/2009/10/emotionml")
-      em.setAttribute("version",self.version)
+      em.setAttribute("version",self.version)    
       if self.category_set:
          em.setAttribute("category-set",self.category_set)
       if self.dimension_set:
@@ -49,6 +49,9 @@ class EmotionML:
       if self.action_tendency_set:
          em.setAttribute("action-tendency-set",self.action_tendency_set)
 
+      if self.info:
+         em.appendChild(self.info.to_xml(doc))
+     
       for emotion in self.emotions:
          em.appendChild(emotion.to_xml(doc))
       doc.appendChild(em)
