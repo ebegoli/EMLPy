@@ -39,7 +39,11 @@ class EmotionML:
       doc = xml.dom.minidom.Document()
       em = doc.createElement('emotionml')
       em.setAttribute("xmlns", "http://www.w3.org/2009/10/emotionml")
-      em.setAttribute("version",self.version)    
+      if self.version is None or "1.0" is not self.version.strip():
+         raise ValueError('Version on emotionml has to be 1.0. Value %s for version is not valid.' % self.version )
+      else:
+         emo.setAttribute("version",self.version)
+ 
       if self.category_set:
          em.setAttribute("category-set",self.category_set)
       if self.dimension_set:
@@ -48,6 +52,8 @@ class EmotionML:
          em.setAttribute("appraisal-set",self.appraisal_set)
       if self.action_tendency_set:
          em.setAttribute("action-tendency-set",self.action_tendency_set)
+
+
 
       if self.info:
          em.appendChild(self.info.to_xml(doc))
@@ -141,7 +147,10 @@ class Emotion:
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
       if self.version:
-        emo.setAttribute("version",self.version)
+        if "1.0" not is self.version.strip():
+           raise ValueError('Version on emotion has to be 1.0. Value %s for version is not valid.' % self.version )
+        else:
+           emo.setAttribute("version",self.version)
       if self.category_set:
          emo.setAttribute("category-set",self.category_set)
       if self.dimension_set:
