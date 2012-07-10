@@ -62,11 +62,16 @@ class TestEMLAssertions(unittest.TestCase):
 	
 
 	def test_111(self):
-		eml=EmotionML()
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		self.assertEqual(doc.documentElement.getAttribute('version'), "1.0", printOutcome('111', 'fail', 'The "version" attribute of <emotionml> does not have the value "1.0"'))
-		print printOutcome("111","pass",'The "version" attribute of <emotionml> has the value "1.0"')
+		try:
+			eml=EmotionML()
+			eml.version='3.0'
+			emxml=eml.to_xml().toprettyxml()
+			doc=parseString(emxml)
+		except:
+			print printOutcome("111","pass",'The "version" attribute of <emotionml> has the value "1.0"')
+			return
+		fail(printOutcome('111', 'fail', 'The "version" attribute of <emotionml> does not have the value "1.0"'))
+			
 	
 
 	def test_112(self):
@@ -318,22 +323,24 @@ class TestEMLAssertions(unittest.TestCase):
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions= doc.getElementsByTagName('emotion')
-		self.assertTrue(emotions[0].getAttribute('version'), printOutcome('171', 'fail', '	The <emotion> element MAY have an attribute "version".'))
-		print printOutcome("171","pass","The <emotion> element can't have an attribute 'version'.")
+		self.assertTrue(emotions[0].getAttribute('version'), printOutcome('171', 'fail', '	The <emotion> element cannot have an attribute "version".'))
+		print printOutcome("171","pass","The <emotion> element has an attribute 'version'.")
 	
 
 	def test_172(self):
-		eml=EmotionML()
-		emo=Emotion()
-		rep=Representation('agnostic', 'action-tendency')
-		emo.action_tendencies.append(rep)
-		emo.version='1.0'
-		eml.emotions.append(emo)
-		emxml=eml.to_xml().toprettyxml()
-		doc=parseString(emxml)
-		emotions=doc.getElementsByTagName('emotion')
-		self.assertEqual(emotions[0].getAttribute('version'), "1.0", printOutcome('172', 'fail', "The 'version' attribute of <emotion> doesn't have the value '1.0'."))
-		print printOutcome("172","pass",'The "version" attribute of <emotion> has the value "1.0".')
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			rep=Representation('agnostic', 'action-tendency')
+			emo.action_tendencies.append(rep)
+			emo.version='3.0'
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except:
+			print printOutcome("172","pass",'The "version" attribute of <emotion> has the value "1.0".')
+			return
+		fail(printOutcome('172', 'fail', "The 'version' attribute of <emotion> doesn't have the value '1.0'."))
+			
 	
 	def test_173(self):
 		eml=EmotionML()
@@ -760,7 +767,7 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_245(self):
 		eml=EmotionML()
 		emo=Emotion()
-		trace=Trace(90, [.6, .4, .8])
+		trace=Trace('90Hz', [.6, .4, .8])
 		rep=Representation('power', 'action-tendency', trace)
 		emo.action_tendencies.append(rep)
 		eml.emotions.append(emo)
@@ -773,7 +780,7 @@ class TestEMLAssertions(unittest.TestCase):
 		try:
 			eml=EmotionML()
 			emo=Emotion()
-			trace=Trace(50, [.8, .4, .2])
+			trace=Trace('50Hz', [.8, .4, .2])
 			rep=Representation(name='approach',representation= 'action-tendency', trace=trace, value= .5 )
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
@@ -824,21 +831,95 @@ class TestEMLAssertions(unittest.TestCase):
 		node=doc.getElementsByTagName('info')
 		self.assertTrue(node[0].getAttribute('id'), printOutcome('305', 'fail', 'The <info> element MAY contain an attribute "id".'))
 		print printOutcome("305","pass","The <info> element MAY contain an attribute 'id'.")
-		
-	'''def test_306(self):
+
 	def test_410(self):
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			ref=Reference()
+			emo.references.append(ref)
+			rep=Representation('power', 'action-tendency')
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except TypeError:
+			print printOutcome("410","pass","The <reference> element requires a 'uri' attribute.")
+			return
+		fail (printOutcome("410","fail","The <reference> element doesn't contain a 'uri' attribute."))
+
+	def test_413(self):
+		eml=EmotionML()
+		emo=Emotion()
+		ref=Reference("http://some-uri", 'triggeredBy')
+		emo.references.append(ref)
+		rep=Representation('power', 'action-tendency')
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		refs=doc.getElementsByTagName('reference')
+		self.assertTrue(refs[0].hasAttribute('role'), printOutcome("413", 'fail', 'The <reference> element MAY contain a "role" attribute.'))
+		print printOutcome("413", 'pass', 'The <reference> element MAY contain a "role" attribute.')
+
+	def test_414(self):
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			ref=Reference("http://some-uri", 'fakeRole')
+			emo.references.append(ref)
+			rep=Representation('power', 'action-tendency')
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except TypeError:
+			print printOutcome("414", 'pass', 'The value of the "role" attribute of the <reference> element, if present, MUST be one of "expressedBy", "experiencedBy", "triggeredBy", "targetedAt".')
+			return
+		fail(printOutcome("414", 'fail', 'The value of the "role" attribute of the <reference> element, if present, MUST be one of "expressedBy", "experiencedBy", "triggeredBy", "targetedAt".'))
+			
+	def test_415(self):
+		eml=EmotionML()
+		emo=Emotion()
+		ref=Reference("http://some-uri", 'triggeredBy', 'voice')
+		emo.references.append(ref)
+		rep=Representation('power', 'action-tendency')
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		refs=doc.getElementsByTagName('reference')
+		self.assertTrue(refs[0].hasAttribute('media-type'), printOutcome("415", 'fail', 'The <reference> element cannot contain a "media-type" attribute.'))
+		print printOutcome("415", 'pass', 'The <reference> element MAY contain a "media-type" attribute.')
+	#TODO
+	'''def test_306(self):
 	def test_411(self):
 	def test_412(self):
-	def test_413(self):
-	def test_414(self):
-	def test_415(self):
 	def test_416(self):
 	def test_417(self):
 	def test_420(self):
 	def test_421(self):
 	def test_422(self):
 	def test_423(self):
+	'''
+	#need to specify type of exception
 	def test_424(self):
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			rep=Representation('deservingness', 'appraisal')
+			emo.appraisals.append(rep)
+			emo.time_ref_anchor_point= "middle"
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+			doc=parseString(emxml)
+			emotions=doc.getElementsByTagName('emotion')
+		except:
+			print printOutcome('424', 'pass','The value of the "time-ref-anchor-point" attribute of <emotion> is either "start" or "end".')
+			return
+		fail(printOutcome('424', 'fail','The value of the "time-ref-anchor-point" attribute of <emotion> is not either "start" or "end".'))
+			 	
+	
+	#TODO
+	'''
 	def test_425(self):
 	'''
 
@@ -865,14 +946,14 @@ class TestEMLAssertions(unittest.TestCase):
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
-		except TypeError:
+		except TypeError:		
 			print printOutcome("501", 'fail', 'The <trace> element MUST have a "freq" attribute.')
 			return
 		fail( printOutcome("501", 'pass', 'The <trace> element MUST have a "freq" attribute.'))
 	
-#TODO	
+	#TODO	
 	'''def test_502(self):'''
-	#Finish working on this!!!!!
+ 
 	def test_503(self):
 		try:
 			eml=EmotionML()
@@ -883,11 +964,12 @@ class TestEMLAssertions(unittest.TestCase):
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
 		except TypeError:
-			print TypeError
-			print printOutcome("501", 'fail', 'The <trace> element MUST have a "samples" attribute.')
+			print printOutcome("503", 'fail', 'The <trace> element MUST have a "samples" attribute.')
 			return
-		fail( printOutcome("501", 'pass', 'The <trace> element MUST have a "samples" attribute.'))
+		fail( printOutcome("503", 'pass', 'The <trace> element MUST have a "samples" attribute.'))
 
+#TODO
+#need vocabulary implemented before can really do these
 '''
 	def test_504(self):
 	def test_600(self):
