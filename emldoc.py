@@ -299,7 +299,7 @@ class Trace:
       """ Produces an EmotionML element """
       trace = doc.createElement('trace')
       trace.setAttribute('freq',str(self.freq))
-      trace.setAttribute('samples',','.join(map(str,self.samples)))
+      trace.setAttribute('samples',' '.join(map(str,self.samples)))
       return trace
 
 class Reference:      
