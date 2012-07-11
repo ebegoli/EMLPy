@@ -312,8 +312,14 @@ class Trace:
    def to_xml(self, doc):
       """ Produces an EmotionML element """
       trace = doc.createElement('trace')
-      trace.setAttribute('freq',str(self.freq))
-      trace.setAttribute('samples',' '.join(map(str,self.samples)))
+      if not self.freq:
+         raise ValueError('Trace element requires freq attribute. It was not set.')
+      else:
+         trace.setAttribute('freq',str(self.freq))
+      if not self.samples:
+         raise ValueError('Trace element requires samples attribute. It was not set.')
+      else:
+         trace.setAttribute('samples',' '.join(map(str,self.samples)))
       return trace
 
 class Reference:      
