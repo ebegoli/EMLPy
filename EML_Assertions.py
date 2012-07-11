@@ -231,8 +231,8 @@ class TestEMLAssertions(unittest.TestCase):
 		
 	
 	#TODO
+	#not sure how to test these two
 	'''
-	#not sure how to test these two one
 	def test_157(self):
 	def test_158(self):
 	'''
@@ -714,15 +714,13 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_240(self):
 		eml= EmotionML()
 		emo= Emotion()
-		eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
-		#emo.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
-		#rep=Representation('attending', 'action-tendency')
-		#emo.action_tendencies.append(rep)
-		#eml.emotions.append(emo)
+		rep=Representation('attending', 'action-tendency')
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		at= doc.getElementsByTagName('action-tendency')
-		self.assertTrue((doc.documentElement.getAttribute('action-tendency-set')) or (), printOutcome("240", 'fail', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
+		self.assertTrue((doc.documentElement.getAttribute('action-tendency-set')), printOutcome("240", 'fail', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
 		print printOutcome("240", 'pass', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')'''
 
 	def test_241(self):
@@ -738,7 +736,7 @@ class TestEMLAssertions(unittest.TestCase):
 			pass
 		emo=Emotion()
 		rep=Representation('nonattending', 'action-tendency')
-		emo.appraisals.append(rep)
+		emo.action_tendencies.append(rep)
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -747,11 +745,33 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("241", 'pass', 'An action-tendency element contains a "name" attribute.')
 	
 	#TODO
-	'''
+	#Check these after checks are implemented
 	def test_242(self):
+		try:
+			eml=EmotionML()
+			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
+			emo=Emotion()
+			rep=Representation('notSpecifying', 'action-tendency')
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except:
+			print printOutcome("242", 'pass', "SUB CONSTRAINT: The value of the 'name' attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an 'action-tendency-set' attribute, then the <emotion> element's attribute defines the declared action tendency vocabulary.")
+			return
+		fail(printOutcome("242", 'fail', 'SUB CONSTRAINT: The value of the "name" attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an "action-tendency-set" attribute, then the <emotion> element\'s attribute defines the declared action tendency vocabulary.'))
+	#this should fail
 	def test_243(self):
-	''' 
-
+		eml=EmotionML()
+		eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
+		emo=Emotion()
+		rep=Representation('rejecting', 'action-tendency')			
+		emo.action_tendencies.append(rep)
+		rep=Representation(name='rejecting', representation='action-tendency', value=.4)			
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+		print emxml
+	
 	def test_244(self):
 		eml=EmotionML()
 		emo=Emotion()
@@ -816,7 +836,7 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		fail( printOutcome("500", "fail", "The value of the 'confidence' attribute MUST be a floating point number in the closed interval [0, 1]."))
 			
-	
+	#TODO
 	'''def test_301(self):
 	def test_302(self):
 	def test_303(self):
@@ -951,9 +971,21 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		fail( printOutcome("501", 'pass', 'The <trace> element MUST have a "freq" attribute.'))
 	
-	#TODO	
-	'''def test_502(self):'''
- 
+	#will need to define the type of exception once created	
+	def test_502(self):
+ 		try:
+			eml=EmotionML()
+			emo=Emotion()
+			trace=Trace(20, [.6, .4, .8])
+			rep=Representation('power', 'action-tendency', trace)
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except:
+			print printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".')
+			return
+		fail( printOutcome("502", 'pass', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+	
 	def test_503(self):
 		try:
 			eml=EmotionML()
