@@ -42,6 +42,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("103","pass","The <emotionml> element may contain one or more <emotion> elements.")
 	
 	#TODO
+	#waiting on Vocabulary Element
 	'''def test_104(self):'''
 
 	def test_105(self):
@@ -83,6 +84,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("112", 'pass', 'The <emotionml> element  MAY contain an attribute "category-set".')
 
 	#TODO
+	#not sure how to do these two
 	'''
 	def test_113(self):
 	def test_114(self):
@@ -97,6 +99,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome('115', 'pass', 'The <emotionml> element MAY contain an attribute "dimension-set".')
 
 	#TODO
+	#not sure how to do these two
 	'''
 	def test_116(self):
 	def test_117(self):
@@ -111,6 +114,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("118", 'pass', 'The <emotionml> element  MAY contain an attribute "appraisal-set".')
 
 	#TODO
+	#not sure how to do these two
 	'''
 	def test_119(self):
 	def test_120(self):
@@ -125,6 +129,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome('121', 'pass', 'The <emotionml> element MAY contain an attribute "action-tendency-set".')
 
 	#TODO
+	#not sure how to do these
 	'''
 	def test_122(self):
 	def test_123(self):
@@ -252,6 +257,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("159", 'pass', 'The <emotionml> element  MAY contain an attribute "category-set".')
 
 	#TODO
+	#not sure how to do these two
 	'''
 	def test_160(self):
 	def test_161(self):
@@ -271,6 +277,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome('162', 'pass', 'The <emotionml> element MAY contain an attribute "dimension-set".')
 
 	#TODO
+	#not sure how to do these two
 	'''
 	def test_163(self):
 	def test_164(self):
@@ -290,6 +297,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("165", 'pass', 'The <emotionml> element  MAY contain an attribute "appraisal-set".')
 
 	#TODO
+	#not sure how to do these two
 	'''
 	def test_166(self):
 	def test_167(self):
@@ -307,7 +315,9 @@ class TestEMLAssertions(unittest.TestCase):
 		emotions= doc.getElementsByTagName('emotion')
 		self.assertTrue(emotions[0].getAttribute('action-tendency-set'), printOutcome('168', 'fail', 'The <emotionml> element cannot contain an attribute "action-tendency-set".'))
 		print printOutcome('168', 'pass', 'The <emotionml> element MAY contain an attribute "action-tendency-set".')
-
+	
+	#TODO
+	#not sure how to do these two
 	'''
 	def test_169(self):
 	def test_170(self):
@@ -357,6 +367,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("173","pass",'The <emotion> element MAY contain an attribute "id".')
 	
 	#TODO
+	#not sure how to do this
 	'''
 	def test_174(self):
 	'''
@@ -453,8 +464,10 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome('181', 'pass','The <emotion> element MAY have an attribute "expressed-through".')
 	
 	#TODO
+	#not sure how to do this
 	'''def test_182(self):'''
-	#TODO need help!
+	#TODO 
+	#need help! Listed as one of the issues
 	'''
 	def test_210(self):
 		eml= EmotionML()
@@ -491,6 +504,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("211", 'pass', 'A <category> element contains a "name" attribute.')
 	
 	#TODO
+	#need issue resolved before implementation
 	'''
 	def test_212(self):
 	def test_213(self):
@@ -520,8 +534,6 @@ class TestEMLAssertions(unittest.TestCase):
 		self.assertTrue(doc.getElementsByTagName('trace'), printOutcome("215", 'fail', 'A <category> can not contain a <trace> element.'))
 		print printOutcome("215", 'pass', 'A <category> MAY contain a <trace> element.')
 
-	#TODO
-	#need help with this as in 156
 	def test_216(self):
 		try:
 			eml=EmotionML()
@@ -548,7 +560,8 @@ class TestEMLAssertions(unittest.TestCase):
 		self.assertTrue(categories[0].hasAttribute('confidence'), printOutcome("217", 'fail', 'A <category> element cannot contain a "confidence" attribute.'))
 		print printOutcome("217", 'pass', 'A <category> element MAY contain a "confidence" attribute.')
 
-	#TODO need help!
+	#TODO
+	#need help! Listed as one of the issues
 	'''
 	def test_220(self):
 		eml= EmotionML()
@@ -586,6 +599,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("221", 'pass', 'A dimension element contains a "name" attribute.')
 	
 	#TODO
+	#waiting on issue to be fixed before implementing
 	'''
 	def test_222(self):
 	def test_223(self):
@@ -615,7 +629,8 @@ class TestEMLAssertions(unittest.TestCase):
 		self.assertTrue(dimensions[0].hasAttribute('confidence'), printOutcome("225", 'fail', 'A <dimension> element cannot contain a "confidence" attribute.'))
 		print printOutcome("225", 'pass', 'A <dimension> element MAY contain a "confidence" attribute.')
 
-	#TODO need help!
+	#TODO 
+	#need help! Listed as one of the issues
 	'''
 	def test_230(self):
 		eml= EmotionML()
@@ -653,6 +668,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("231", 'pass', 'An appraisal element contains a "name" attribute.')
 	
 	#TODO
+	#waiting on issue to be resolved before implementing
 	'''
 	def test_232(self):
 	def test_233(self):
@@ -709,7 +725,8 @@ class TestEMLAssertions(unittest.TestCase):
 		self.assertTrue(appraisals[0].hasAttribute('confidence'), printOutcome("237", 'fail', 'A <appraisal> element cannot contain a "confidence" attribute.'))
 		print printOutcome("237", 'pass', 'A <appraisal> element MAY contain a "confidence" attribute.')
 
-	#TODO need help!
+	#TODO 
+	#need help! Listed as one of the issues
 	'''
 	def test_240(self):
 		eml= EmotionML()
@@ -837,6 +854,7 @@ class TestEMLAssertions(unittest.TestCase):
 		fail( printOutcome("500", "fail", "The value of the 'confidence' attribute MUST be a floating point number in the closed interval [0, 1]."))
 			
 	#TODO
+	#not sure how to do these
 	'''def test_301(self):
 	def test_302(self):
 	def test_303(self):
@@ -851,6 +869,10 @@ class TestEMLAssertions(unittest.TestCase):
 		node=doc.getElementsByTagName('info')
 		self.assertTrue(node[0].getAttribute('id'), printOutcome('305', 'fail', 'The <info> element MAY contain an attribute "id".'))
 		print printOutcome("305","pass","The <info> element MAY contain an attribute 'id'.")
+	
+	#TODO
+	# not sure how to do
+	'''def test_306(self):'''
 
 	def test_410(self):
 		try:
@@ -866,6 +888,11 @@ class TestEMLAssertions(unittest.TestCase):
 			print printOutcome("410","pass","The <reference> element requires a 'uri' attribute.")
 			return
 		fail (printOutcome("410","fail","The <reference> element doesn't contain a 'uri' attribute."))
+	#TODO
+	#not sure how to implement
+	'''
+	def test_411(self):
+	def test_412(self):'''
 
 	def test_413(self):
 		eml=EmotionML()
@@ -909,10 +936,10 @@ class TestEMLAssertions(unittest.TestCase):
 		refs=doc.getElementsByTagName('reference')
 		self.assertTrue(refs[0].hasAttribute('media-type'), printOutcome("415", 'fail', 'The <reference> element cannot contain a "media-type" attribute.'))
 		print printOutcome("415", 'pass', 'The <reference> element MAY contain a "media-type" attribute.')
+	
 	#TODO
-	'''def test_306(self):
-	def test_411(self):
-	def test_412(self):
+	# Not sure how to implement
+	'''
 	def test_416(self):
 	def test_417(self):
 	def test_420(self):
