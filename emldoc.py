@@ -385,6 +385,17 @@ class Trace:
       if not self.freq:
          raise ValueError('Trace element requires freq attribute. It was not set.')
       else:
+         #Perform checks for units
+         parts = str(self.freq).split('Hz')
+         try:
+            fl = float(parts[0])
+         except ValueError:
+            raise ValueError('Frequency attribute on trace element was not float: ' + str(self.freq))
+         if fl <= float(0):
+            raise ValueError('Frequency attribute on trace element was negative float: ' + str(self.freq))
+         if not str(self.freq).strip().endswith('Hz'):
+            raise ValueError('Frequency attribute on trace element does not have valid (Hz) unit: ' + 
+               str(self.freq))
          trace.setAttribute('freq',str(self.freq))
       if not self.samples:
          raise ValueError('Trace element requires samples attribute. It was not set.')
@@ -421,7 +432,7 @@ class Reference:
          if self.role in (self.roles):
             ref.setAttribute('role',self.role)
          else:
-            raise TypeError( "role ("+self.role+") must be one of " + self.roles )
+            raise TypeError( "role ("+self.role+") must be one of " + map(str,self.roles) )
       return ref
 
 def validate_dimension(dim):

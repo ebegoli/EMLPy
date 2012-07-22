@@ -231,7 +231,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except ValueError: 
 			print printOutcome('156', 'pass', 'The <emotion> element requires at least one <category> or <dimension> or <appraisal> or <action-tendency> element.')
 			return
-		fail (printOutcome('156', 'fail', 'The <emotion> element does not require at least one <category> or <dimension> or <appraisal> or <action-tendency> element.'))
+		self.fail (printOutcome('156', 'fail', 'The <emotion> element does not require at least one <category> or <dimension> or <appraisal> or <action-tendency> element.'))
 
 		
 	
@@ -710,7 +710,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except ValueError:
 			print printOutcome("236", 'pass', 'A <appraisal> cannot contain both a "value" attribute and a <trace> element.')
 			return
-		fail( printOutcome("236", 'fail', 'A <appraisal> can contain both a "value" attribute and a <trace> element.'))
+		self.fail( printOutcome("236", 'fail', 'A <appraisal> can contain both a "value" attribute and a <trace> element.'))
 			
 
 	def test_237(self):
@@ -775,7 +775,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except:
 			print printOutcome("242", 'pass', "SUB CONSTRAINT: The value of the 'name' attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an 'action-tendency-set' attribute, then the <emotion> element's attribute defines the declared action tendency vocabulary.")
 			return
-		fail(printOutcome("242", 'fail', 'SUB CONSTRAINT: The value of the "name" attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an "action-tendency-set" attribute, then the <emotion> element\'s attribute defines the declared action tendency vocabulary.'))
+		self.fail(printOutcome("242", 'fail', 'SUB CONSTRAINT: The value of the "name" attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an "action-tendency-set" attribute, then the <emotion> element\'s attribute defines the declared action tendency vocabulary.'))
 	#this should fail
 	def test_243(self):
 		eml=EmotionML()
@@ -825,7 +825,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except ValueError:
 			print printOutcome("246", 'pass', 'A <action-tendency> cannot contain both a "value" attribute and a <trace> element.')
 			return
-		fail(printOutcome("246", 'fail', 'A <action-tendency> can contain both a "value" attribute and a <trace> element.'))
+		self.fail(printOutcome("246", 'fail', 'A <action-tendency> can contain both a "value" attribute and a <trace> element.'))
 			
 
 	def test_237(self):
@@ -851,7 +851,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except ValueError:
 			print printOutcome("300", "pass", "The value of the 'confidence' attribute must be in the closed interval [0, 1].")
 			return
-		fail( printOutcome("500", "fail", "The value of the 'confidence' attribute MUST be a floating point number in the closed interval [0, 1]."))
+		self.fail( printOutcome("500", "fail", "The value of the 'confidence' attribute MUST be a floating point number in the closed interval [0, 1]."))
 			
 	#TODO
 	#not sure how to do these
@@ -887,7 +887,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except TypeError:
 			print printOutcome("410","pass","The <reference> element requires a 'uri' attribute.")
 			return
-		fail (printOutcome("410","fail","The <reference> element doesn't contain a 'uri' attribute."))
+		self.fail (printOutcome("410","fail","The <reference> element doesn't contain a 'uri' attribute."))
 	#TODO
 	#not sure how to implement
 	'''
@@ -921,7 +921,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except TypeError:
 			print printOutcome("414", 'pass', 'The value of the "role" attribute of the <reference> element, if present, MUST be one of "expressedBy", "experiencedBy", "triggeredBy", "targetedAt".')
 			return
-		fail(printOutcome("414", 'fail', 'The value of the "role" attribute of the <reference> element, if present, MUST be one of "expressedBy", "experiencedBy", "triggeredBy", "targetedAt".'))
+		self.fail(printOutcome("414", 'fail', 'The value of the "role" attribute of the <reference> element, if present, MUST be one of "expressedBy", "experiencedBy", "triggeredBy", "targetedAt".'))
 			
 	def test_415(self):
 		eml=EmotionML()
@@ -962,7 +962,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except:
 			print printOutcome('424', 'pass','The value of the "time-ref-anchor-point" attribute of <emotion> is either "start" or "end".')
 			return
-		fail(printOutcome('424', 'fail','The value of the "time-ref-anchor-point" attribute of <emotion> is not either "start" or "end".'))
+		self.fail(printOutcome('424', 'fail','The value of the "time-ref-anchor-point" attribute of <emotion> is not either "start" or "end".'))
 			 	
 	
 	#TODO
@@ -981,7 +981,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except ValueError:
 			print printOutcome("500", "pass", 'The value of a "value" attribute, if present, MUST be a floating point value from the closed interval [0, 1].')
 			return
-		fail( printOutcome("500", "fail", "The value of a 'value' attribute, if present, MUST be a floating point value from the closed interval [0, 1]."))
+		self.fail( printOutcome("500", "fail", "The value of a 'value' attribute, if present, MUST be a floating point value from the closed interval [0, 1]."))
 			
 
 	def test_501(self):
@@ -996,23 +996,127 @@ class TestEMLAssertions(unittest.TestCase):
 		except TypeError:		
 			print printOutcome("501", 'fail', 'The <trace> element MUST have a "freq" attribute.')
 			return
-		fail( printOutcome("501", 'pass', 'The <trace> element MUST have a "freq" attribute.'))
+		self.fail( printOutcome("501", 'pass', 'The <trace> element MUST have a "freq" attribute.'))
 	
 	#will need to define the type of exception once created	
 	def test_502(self):
+		""" Test validity of the freq format """
+
+		#negative float
  		try:
 			eml=EmotionML()
 			emo=Emotion()
-			trace=Trace(20, [.6, .4, .8])
+			trace=Trace('-.5Hz', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
-		except:
-			print printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".')
-			return
-		fail( printOutcome("502", 'pass', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
-	
+		except TypeError, ValueError:
+			pass
+		else:
+			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+		
+		#negative float with space
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			trace=Trace('-.5 Hz', [.6, .4, .8])
+			rep=Representation('power', 'action-tendency', trace)
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except TypeError, ValueError:
+			pass
+		else:
+			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+
+		# no Hz
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			trace=Trace('.5', [.6, .4, .8])
+			rep=Representation('power', 'action-tendency', trace)
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except TypeError, ValueError:
+			pass
+		else:
+			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+		
+		#Wrong unit
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			trace=Trace('.5 Kz', [.6, .4, .8])
+			rep=Representation('power', 'action-tendency', trace)
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()
+		except TypeError, ValueError:
+			pass
+		else:
+			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+		
+
+		#wrong unit at the end
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			trace=Trace('.5 Hz Kz', [.6, .4, .8])
+			rep=Representation('power', 'action-tendency', trace)
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()	
+
+		except TypeError, ValueError:
+			pass
+		else:
+			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+		
+
+		# wrong float value
+		try:
+			eml=EmotionML()
+			emo=Emotion()
+			trace=Trace('Az Hz', [.6, .4, .8])
+			rep=Representation('power', 'action-tendency', trace)
+			emo.action_tendencies.append(rep)
+			eml.emotions.append(emo)
+			emxml=eml.to_xml().toprettyxml()		
+		except TypeError, ValueError:
+			pass
+		else:
+			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
+
+		# these are all good
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace('10.5Hz', [.6, .4, .8])
+		rep=Representation('power', 'action-tendency', trace)
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace('10.5 Hz', [.6, .4, .8])
+		rep=Representation('power', 'action-tendency', trace)
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+
+		
+		eml=EmotionML()
+		emo=Emotion()
+		trace=Trace('.5 Hz', [.6, .4, .8])
+		rep=Representation('power', 'action-tendency', trace)
+		emo.action_tendencies.append(rep)
+		eml.emotions.append(emo)
+		emxml=eml.to_xml().toprettyxml()
+
+		print printOutcome("502", 'pass', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".')
+
 	def test_503(self):
 		try:
 			eml=EmotionML()
@@ -1025,7 +1129,7 @@ class TestEMLAssertions(unittest.TestCase):
 		except TypeError:
 			print printOutcome("503", 'fail', 'The <trace> element MUST have a "samples" attribute.')
 			return
-		fail( printOutcome("503", 'pass', 'The <trace> element MUST have a "samples" attribute.'))
+		self.fail( printOutcome("503", 'pass', 'The <trace> element MUST have a "samples" attribute.'))
 
 #TODO
 #need vocabulary implemented before can really do these
