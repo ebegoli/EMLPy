@@ -211,22 +211,46 @@ class Emotion:
          self.action_tendencies):
          for item in child:
             emo.appendChild(item.to_xml(doc))
-      
       if self.emotion_id:
          emo.setAttribute('id', str(self.emotion_id))
+      
       if self.start:
+         if not is_positive_int(self.start):
+            raise ValueError( "start %s is not a positive integer." % 
+               str(self.start) )
          emo.setAttribute('start', str(self.start))
+
       if self.end:
+         if not is_positive_int(self.end):
+            raise ValueError( "end %s is not a positive integer." % 
+               str(self.end) )
          emo.setAttribute('end', str(self.end))
+ 
       if self.duration:
-         emo.setAttribute('duration', str(self.duration))
+         if not is_positive_int(self.duration):
+            raise ValueError( "duration %s is not a positive integer." % 
+               str(self.duration) )
+            emo.setAttribute('duration', str(self.duration))
       if self.time_ref_uri:
          emo.setAttribute('time-ref-uri', str(self.time_ref_uri))
+      
       if self.time_ref_anchor_point:
+         if ( (str(self.time_ref_anchor_point).strip() != "start"  ) and 
+            ( str(self.time_ref_anchor_point).strip() != "end")):
+            raise ValueError( "time-ref-anchor-point %s is not either start nor end." 
+               % str(self.time_ref_anchor_point) )
          emo.setAttribute('time-ref-anchor-point', str(self.time_ref_anchor_point))
+      
       if self.offset_to_start:
+         if not is_int( self.offset_to_start ):
+            raise ValueError( "offset-to-start %s is not an integer." % 
+               str(self.offset_to_start) )
          emo.setAttribute('offset-to-start', str(self.offset_to_start))
+
       if self.expressed_through:
+         if str(self.expressed_through).find(" ") >=0:
+            raise ValueError( "expressed-through %s is of not valid xsd:token type." % 
+               self.expressed_through )
          emo.setAttribute('expressed-through', str(self.expressed_through))
       if self.info:
          emo.appendChild(self.info.to_xml(doc))
@@ -469,7 +493,24 @@ class Reference:
             raise TypeError( "role ("+self.role+") must be one of " + map(str,self.roles) )
       return ref
 
+def is_int(s):
+   """ Simple int check """
+   try: 
+        int(s)
+        return True
+   except ValueError:
+        return False
+
+def is_positive_int(s):
+   """ Simple positive int check """
+   try: 
+      val = int(s)
+      return (val >= 0)
+   except ValueError:
+        return False
+
 def validate_dimension(dim):
+   """ Checks that dimension value is provided"""
    if not (dim.value): 
          raise ValueError('No trace nor value are provided for ' + dim.representation)
 
@@ -496,12 +537,18 @@ if __name__ == "__main__":
         emotion.emotion_id = "test id"
         emotion.expressed_through = "voice"
         emotion.action_tendency_set="http://someurl/action-tendency-set"
+        emotion.end = "3"
+        emotion.start = "2"
+        emotion.duration = "5"
+        emotion.time_ref_anchor_point = "starx"
+        emotion.expressed_through = "12345"
+        emotion.offset_to_start = "2"
         emotion.dimension_set ="http://someurl/action-tendency-set"
 
         rep = Representation(name='test',representation='action-tendency',
         value='0.5',confidence='1')
-        rep2 = Representation(name='test',representation='category',
-        value='0.5',confidence='1')
+       # rep2 = Representation(name='test',representation='category',
+        #value='0.5',confidence='1')
 
         trace = Trace( "2", ('1.5','1.5','1.6')) 
 
@@ -510,7 +557,7 @@ if __name__ == "__main__":
         reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
 
         emotion.action_tendencies.append(rep)
-        emotion.categories.append(rep2)
+        #emotion.categories.append(rep2)
         emotion.info = info
         emotion.references.append(reference)
         print emotion.get_undefined_sets()
