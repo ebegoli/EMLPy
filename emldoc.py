@@ -62,10 +62,24 @@ class EmotionML:
          em.appendChild(self.info.to_xml(doc))
      
       for emotion in self.emotions:
+         # see if there are any undefined sets and if so, if defined at this level
+         undef_sets = emotion.get_undefined_sets()
+         self.check_if_defined(undef_sets, emotion)
          em.appendChild(emotion.to_xml(doc))
       doc.appendChild(em)
       return doc
 
+   def check_if_defined(self, undefined_sets, emotion):
+      """ Checks that sets undefined at the emotion level are defined on this,
+      emotionml level. If they are not, function will raise value error."""
+      if undefined_sets["dimension-set"] and not self.dimension_set:
+         raise ValueError( "dimension-set not defined for " + str(emotion.emotion_id) )
+      if undefined_sets["category-set"] and not self.category_set:
+         raise ValueError( "category-set not defined for " + str(emotion.emotion_id) )
+      if undefined_sets["action-tendency-set"] and not self.action_tendency_set:
+         raise ValueError( "action-tendency-set not defined for " + str(emotion.emotion_id) )
+      if undefined_sets["appraisal-set"] and not self.appraisal_set:
+         raise ValueError( "appraisal-set not defined for " + str(emotion.emotion_id) )
 
 class Emotion: 
    """ This element represents a single emotion annotation.
@@ -138,6 +152,26 @@ class Emotion:
       self.offset_to_start = None
       self.expressed_through = None
 
+   #TODO: consider using one append method that will resolve reference
+   # and add to appropriate list
+
+   def get_undefined_sets(self):
+      """ iterate through four representations and make sure
+      the representation sets on emotion defined these
+      if not - return representations that are not defined
+      and dictionary of names ('representation':True/False) """
+      unrepresented = {'dimension-set':False, 'category-set':False,
+      'appraisal-set':False, 'action-tendency-set':False}
+
+      if self.categories and not self.category_set:
+         unrepresented['category-set'] = True
+      if self.action_tendencies and not self.action_tendency_set :
+         unrepresented["action-tendency-set"] = True
+      if self.dimensions and not self.dimension_set:
+         unrepresented["dimension-set"] = True
+      if self.appraisals and not self.appraisal_set:
+         unrepresented["appraisal-set"] = True
+      return unrepresented
 
    def to_xml(self, doc ):
       """ Creates EmotionML compliant Emotion element """
@@ -456,6 +490,7 @@ def has_same_name( elements ):
 if __name__ == "__main__":
         emotionml = EmotionML()
         emotionml.dimension_set="http://someurl/dim-set"
+        emotionml.appraisal_set="http://somedef"
         emotion = Emotion()
 
         emotion.emotion_id = "test id"
@@ -465,6 +500,8 @@ if __name__ == "__main__":
 
         rep = Representation(name='test',representation='action-tendency',
         value='0.5',confidence='1')
+        rep2 = Representation(name='test',representation='category',
+        value='0.5',confidence='1')
 
         trace = Trace( "2", ('1.5','1.5','1.6')) 
 
@@ -473,8 +510,10 @@ if __name__ == "__main__":
         reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
 
         emotion.action_tendencies.append(rep)
+        emotion.categories.append(rep2)
         emotion.info = info
         emotion.references.append(reference)
+        print emotion.get_undefined_sets()
 
         #just for control purposes
         #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
