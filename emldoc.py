@@ -538,11 +538,11 @@ if __name__ == "__main__":
         emotion.expressed_through = "voice"
         emotion.action_tendency_set="http://someurl/action-tendency-set"
         emotion.end = "3"
-        emotion.start = "2"
+        emotion.start = "12"
         emotion.duration = "5"
-        emotion.time_ref_anchor_point = "starx"
+        emotion.time_ref_anchor_point = "start"
         emotion.expressed_through = "12345"
-        emotion.offset_to_start = "2"
+        emotion.offset_to_start = "-62"
         emotion.dimension_set ="http://someurl/action-tendency-set"
 
         rep = Representation(name='test',representation='action-tendency',
