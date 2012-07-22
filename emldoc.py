@@ -23,6 +23,8 @@ __author__ = 'Edmon Begoli'
 import sys
 import xml.dom.minidom
 
+representations = ('dimension', 'category','appraisal', 'action-tendency')
+
 class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
 
@@ -147,6 +149,12 @@ class Emotion:
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
 
+
+      check_uniqueness( self.action_tendencies, "action-tendency" )
+      check_uniqueness( self.categories, "category" )
+      check_uniqueness( self.appraisals, "appraisal" )
+      check_uniqueness( self.dimensions, "dimension" )
+
       if self.version:
          if "1.0" != self.version.strip():
             raise ValueError('Version on emotion has to be 1.0. Value %s for version is not valid.' % self.version )
@@ -191,6 +199,70 @@ class Emotion:
 
       return emo
 
+class Vocabulary:
+   """ Contains the definition of an emotion vocabulary - <vocabulary>  """
+   def __init__(self,type,id,items,info=None):
+      self.type = type
+      self.id = id
+      self.items = items
+      self.info = info
+
+   def __str__(self):
+      return "type:%s id:%s info:%s" % (self.type,self.id,map(str,this.items))
+
+
+   def to_xml(self, doc):
+      """ Produces a <vocabulary> element """
+      voc = doc.createElement('vocabulary')
+      if not self.id:
+         raise ValueError( 'id attribute has to be set on a vocabulary' )
+      if not self.type:
+         raise ValueError( 'type attribute has to be set on a vocabulary %s' % self.id )
+      if self.type not in representations:
+         raise TypeError( 'type %s attribute on vocabulary %s has to be one of the representations %s' % 
+            self.type, self.id, map(str,representations) )
+
+      voc.setAttribute('id',str(self.id))
+      voc.setAttribute('type',str(self.type))
+
+      if not self.items:
+         raise TypeError( 'There should be at least on item on vocabulary %s' 
+            % self.id )
+
+      if self.info:
+         voc.appendChild(self.info.to_xml(doc))
+
+      if items:
+         check_uniqueness( items,"vocabulary "+self.id )
+
+      for item in items:
+         voc.appendChild(item.to_xml(doc))
+      return voc
+
+class Item:
+   """ Representation for <item> which represents the definition of one vocabulary item, 
+   associated with a value which can be used in the "name" attribute of <category>, 
+   <dimension>, <appraisal> or <action-tendency> 
+   (depending on the type of vocabulary being defined). """
+
+   def __init__(self,name,info=None):
+      self.name = name
+      self.info = info
+
+   def __str__(self):
+      return "name:%s info:%s " % (self.name,str(self.info))
+
+   def to_xml(self,doc):
+      """ Produces an <item> element """
+      item = doc.createElement('item')
+
+      if not self.name:
+         raise ValueError( 'name attribute is required on item element' )
+      item.setAttribute('name',str(self.name))
+
+      if self.info:
+         item.appendChild(self.info.to_xml(doc))
+
 class Representation:
    """ This class is an abstract representation (i.e. there is no such element 
       as <representation> in EmotionML) of an emotion expressed through one of 
@@ -214,17 +286,15 @@ class Representation:
          confidence, the annotator's confidence that the annotation 
          given for this representation is correct.
        """
-   representations = ('dimension', 'category', 
-      'appraisal', 'action-tendency')
 
    def __init__(self,name,representation, trace=None, value=None, confidence=None):
       '''name is a given name for this representation and representation has to be 
       one of 'dimension', 'category', 'appraisal', 'action-tendency' '''
       assert representation, 'name of representation is empty'
-      assert representation in self.representations, 'name of representation:%s is not in\
-       the list of representations' % str(self.representations)
+      assert representation in representations, 'name of representation:%s is not in\
+       the list of representations' % str(representations)
       self.representation = representation
-      self.repr_name = name
+      self.name = name
       self.trace = trace
       self.value = value
       self.confidence = confidence 
@@ -237,7 +307,7 @@ class Representation:
 
    def __str__(self):
       return "representation:%s name:%s trace:%s value:%s confidence:%s" % \
-      (self.representation, self.repr_name, self.trace, self.value, self.confidence)
+      (self.representation, self.name, self.trace, self.value, self.confidence)
      
    def to_xml(self, doc):
       """ Creates EmotionML compliant representation """
@@ -248,17 +318,17 @@ class Representation:
 
       repr = doc.createElement( str(self.representation) )
 
-      if not self.repr_name:
+      if not self.name:
          raise ValueError('Name has to be provided for %s %s' % 
-            (str(self.representation), str(self.repr_name)) )
-      repr.setAttribute('name',str(self.repr_name))
+            (str(self.representation), str(self.name)) )
+      repr.setAttribute('name',str(self.name))
 
       if self.representation == 'dimension':
          if not self.value and not self.trace:
-            raise ValueError('Either trace or value has to be provided for dimension ' + self.repr_name)
+            raise ValueError('Either trace or value has to be provided for dimension ' + self.name)
 
       if self.value and self.trace:
-            raise ValueError('Trace and value cannot be both provided for ' + self.repr_name)
+            raise ValueError('Trace and value cannot be both provided for ' + self.name)
 
       if self.trace:
             repr.appendChild(self.trace.to_xml(doc))
@@ -356,7 +426,22 @@ class Reference:
 
 def validate_dimension(dim):
    if not (dim.value): 
-         raise ValueError('No trace nor value are provided for ' + dim.representation) 
+         raise ValueError('No trace nor value are provided for ' + dim.representation)
+
+def check_uniqueness( elements, context ):
+   """ Validates the elements of the list for name uniqueness 
+   and throws validation exception is names are not unique """
+   if has_same_name( elements ):
+      #TODO: handle here case when there are no values in a list
+      raise ValueError('Not all names of %s are unique: %s' % 
+         (  context, map(str,elements ) )) 
+
+def has_same_name( elements ):
+   """ Checks if the names of the elements are same
+   """ 
+   name = [element.name for element in elements ]
+   return len(set(name)) < len(name)
+
 if __name__ == "__main__":
         emotionml = EmotionML()
         emotionml.dimension_set="http://someurl/dim-set"

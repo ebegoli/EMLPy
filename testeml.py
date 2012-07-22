@@ -155,6 +155,33 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	self.assertRaises(ValueError, rep.to_xml, doc)
 
     
+   def test_repetition_of_representation(self):
+   	""" """
+   	rep1 = Representation(name='test',representation='action-tendency',
+     	value='0.5',confidence='1')
+   	rep2 = Representation(name='test',representation='action-tendency',
+     	value='0.5',confidence='1')
+   	rep3 = Representation(name='test3',representation='action-tendency',
+     	value='0.5',confidence='1')
+   	rep4 = Representation(name='test4',representation='action-tendency',
+     	value='0.5',confidence='1')
+   	rep5 = Representation(name='test4',representation='action-tendency',
+     	value='0.5',confidence='1')
+
+   	repeated = [rep1,rep2,rep3,rep4]
+   	unique = [rep1,rep3,rep4]
+   	repeated_twice = [rep1,rep2,rep3,rep4,rep5]
+   	single = [rep1]
+   	double_repeated = [rep1, rep2]
+   	double_unique = [rep1,rep3]
+
+   	self.assertTrue( has_same_name(repeated), "Occurs repeated " + str(repeated) )
+   	self.assertFalse( has_same_name(unique), "All unique " + str(unique) )
+   	self.assertTrue( has_same_name(repeated_twice), "Occurs repeated twice" + str(repeated_twice) )
+   	self.assertFalse( has_same_name(single), "Single element " + str(single) )
+   	self.assertTrue( has_same_name(double_repeated), "Double, repeated element " + str(double_repeated) )
+   	self.assertFalse( has_same_name(double_unique), "Double, unique elements " + str(double_unique) )
+
    def test_emotionml(self):
 	eml= EmotionML()
 	
@@ -167,11 +194,11 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emotion.emotion_id='fear'
 	
 	#category
-	rep=Representation(name='fear', representation='category', value='100', confidence='.8')
+	rep=Representation(name='fear', representation='category', value='.05', confidence='.8')
 	emotion.categories.append(rep)
 	
 	#dimension
-	rep=Representation(name="unpredictability", representation='dimension', confidence='.5', value='50')
+	rep=Representation(name="unpredictability", representation='dimension', confidence='.5', value='.04')
 	emotion.dimensions.append(rep)
 	
 	#action-tendency
@@ -179,7 +206,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emotion.action_tendencies.append(rep)
 
 	#Appraisal
-	rep=Representation(name='unexpectedness', representation='appraisal', confidence='.2', value='90')
+	rep=Representation(name='unexpectedness', representation='appraisal', confidence='.2', value='.09')
 	emotion.appraisals.append(rep)
 	eml.emotions.append(emotion)
 	
@@ -195,7 +222,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emotion2=Emotion()
 	emotion2.emotion_id="Happy"
 	
-	rep=Representation(name='happiness', representation='category', value='30')
+	rep=Representation(name='happiness', representation='category', value='.30')
 	emotion2.categories.append(rep)
 	eml.emotions.append(emotion2)
 
@@ -210,7 +237,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emotion3=Emotion()
 	emotion3.emotion_id="Confused"
 	
-	rep=Representation(name='confusion', representation='category', value='20')
+	rep=Representation(name='confusion', representation='category', value='.20')
 	emotion3.categories.append(rep)
 	eml.emotions.append(emotion3)
 
@@ -279,7 +306,30 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	rep=Representation(name='likelihood', value="5.0", representation='appraisal')
 	emo.appraisals.append(rep)
 	emoML.emotions.append(emo)
+	#TODO: we need to implement this
 	#print emoML.to_xml().toprettyxml()
+  
+   def test_name_uniqueness(self):	
+	#create the emotionalml
+	emoML= EmotionML()
+	emo=Emotion()
+	rep=Representation(name='approach', value="0.7", representation='action-tendency')
+	emo.dimensions.append(rep)
+	rep=Representation(name='approach', value="0.7", representation='action-tendency')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='being-with', value="0.8", representation='action-tendency')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='attending', representation='action-tendency', value='0.7')
+	emo.dimensions.append(rep)
+
+	rep=Representation(name='dominating', representation='action-tendency', value='0.7')
+	emo.dimensions.append(rep)
+
+	emoML.emotions.append(emo)
+	#emoML.to_xml()
+	self.assertRaises( ValueError, emoML.to_xml )
 
    #Testing Action-tendency
    def test_actionTendency(self):
