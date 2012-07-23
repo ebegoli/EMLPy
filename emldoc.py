@@ -38,6 +38,7 @@ class EmotionML:
       self.action_tendency_set = None
 
    def to_xml(self):
+      """ Generates representation for the whole document with validations """
       doc = xml.dom.minidom.Document()
       em = doc.createElement('emotionml')
       em.setAttribute("xmlns", "http://www.w3.org/2009/10/emotionml")
@@ -55,8 +56,6 @@ class EmotionML:
          em.setAttribute("appraisal-set",self.appraisal_set)
       if self.action_tendency_set:
          em.setAttribute("action-tendency-set",self.action_tendency_set)
-
-
 
       if self.info:
          em.appendChild(self.info.to_xml(doc))
@@ -130,6 +129,7 @@ class Emotion:
    """
    
    def __init__(self):
+      """ Constructor """
 
       self.category_set = None
       self.dimension_set = None
@@ -178,7 +178,9 @@ class Emotion:
 
       emo = doc.createElement('emotion')
       
-      #TODO: is this really true if it is already declared at the global level
+      """ my interpretation of http://www.w3.org/TR/emotionml/#s2.1.2
+      However, the <emotion> element MUST contain at least one <category> or 
+      <dimension> or <appraisal> or <action-tendency> element. """
       if not (self.categories or self.dimensions 
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
@@ -266,8 +268,8 @@ class Vocabulary:
       self.info = info
 
    def __str__(self):
+      """ Returns string representation of the vocabulary """
       return "type:%s id:%s info:%s" % (self.type,self.id,map(str,this.items))
-
 
    def to_xml(self, doc):
       """ Produces a <vocabulary> element """
@@ -304,10 +306,12 @@ class Item:
    (depending on the type of vocabulary being defined). """
 
    def __init__(self,name,info=None):
+      """ Constructor - name is mandatory"""
       self.name = name
       self.info = info
 
    def __str__(self):
+      """ string representation for item """
       return "name:%s info:%s " % (self.name,str(self.info))
 
    def to_xml(self,doc):
@@ -357,23 +361,14 @@ class Representation:
       self.value = value
       self.confidence = confidence 
 
-   def get_category(self):
-      #TODO: this has to be transformed into name, namespace tuple
-      """ Returns the name of the representation that can be used in 
-      set of categories """
-      return self.representation
-
    def __str__(self):
+      """ string representation of what it carries 
+      dimension, category, appraisal, action-tendency """
       return "representation:%s name:%s trace:%s value:%s confidence:%s" % \
       (self.representation, self.name, self.trace, self.value, self.confidence)
      
    def to_xml(self, doc):
       """ Creates EmotionML compliant representation """
-      #TODO: validate that if the <category> element is used, a category 
-      # vocabulary MUST be declared (see <emotion> and <emotionml>), 
-      # and the category name as given in the name attribute 
-      # MUST be an item in the declared category vocabulary.
-
       repr = doc.createElement( str(self.representation) )
 
       if not self.name:
@@ -401,14 +396,13 @@ class Representation:
             raise ValueError('Confidence has to be within closed [0,1] interval instead of ' + str(self.confidence))
          else:
             repr.setAttribute('confidence',str(self.confidence))   
-
       return repr
-
 
 class Info:
    """ Info element <info>, structure is flexible and we represent its content 
    as text """
    def __init__(self,id=None):
+      """ Constructor - nothing is required """
       self.content=None
       self.id=None 
       if id:
@@ -422,7 +416,6 @@ class Info:
          info_text = doc.createTextNode(str(self.content))
          info.appendChild(info_text)
       return info
-
 
 class Trace:      
    """Representation for the <trace> which captures the
@@ -493,6 +486,7 @@ class Reference:
             raise TypeError( "role ("+self.role+") must be one of " + map(str,self.roles) )
       return ref
 
+#module level functions
 def is_int(s):
    """ Simple int check """
    try: 
@@ -518,7 +512,6 @@ def check_uniqueness( elements, context ):
    """ Validates the elements of the list for name uniqueness 
    and throws validation exception is names are not unique """
    if has_same_name( elements ):
-      #TODO: handle here case when there are no values in a list
       raise ValueError('Not all names of %s are unique: %s' % 
          (  context, map(str,elements ) )) 
 
@@ -527,46 +520,3 @@ def has_same_name( elements ):
    """ 
    name = [element.name for element in elements ]
    return len(set(name)) < len(name)
-
-if __name__ == "__main__":
-        emotionml = EmotionML()
-        emotionml.dimension_set="http://someurl/dim-set"
-        emotionml.appraisal_set="http://somedef"
-        emotion = Emotion()
-
-        emotion.emotion_id = "test id"
-        emotion.expressed_through = "voice"
-        emotion.action_tendency_set="http://someurl/action-tendency-set"
-        emotion.end = "3"
-        emotion.start = "12"
-        emotion.duration = "5"
-        emotion.time_ref_anchor_point = "start"
-        emotion.expressed_through = "12345"
-        emotion.offset_to_start = "-62"
-        emotion.dimension_set ="http://someurl/action-tendency-set"
-
-        rep = Representation(name='test',representation='action-tendency',
-        value='0.5',confidence='1')
-       # rep2 = Representation(name='test',representation='category',
-        #value='0.5',confidence='1')
-
-        trace = Trace( "2", ('1.5','1.5','1.6')) 
-
-        info = Info("some-id")
-
-        reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
-
-        emotion.action_tendencies.append(rep)
-        #emotion.categories.append(rep2)
-        emotion.info = info
-        emotion.references.append(reference)
-        print emotion.get_undefined_sets()
-
-        #just for control purposes
-        #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
-        
-        emotionml.emotions.append(emotion)
-
-
-        emxml = emotionml.to_xml().toprettyxml()
-        print emxml
