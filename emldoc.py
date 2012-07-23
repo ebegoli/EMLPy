@@ -232,7 +232,7 @@ class Emotion:
          if not is_positive_int(self.duration):
             raise ValueError( "duration %s is not a positive integer." % 
                str(self.duration) )
-            emo.setAttribute('duration', str(self.duration))
+         emo.setAttribute('duration', str(self.duration))
       if self.time_ref_uri:
          emo.setAttribute('time-ref-uri', str(self.time_ref_uri))
       
