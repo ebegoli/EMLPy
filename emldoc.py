@@ -306,8 +306,8 @@ class Vocabulary:
       if self.info:
          voc.appendChild(self.info.to_xml(doc))
 
-      if items:
-         check_uniqueness( items,"vocabulary "+self.id )
+      if self.items:
+         check_uniqueness( self.items,"vocabulary "+self.id )
 
       for item in items:
          voc.appendChild(item.to_xml(doc))

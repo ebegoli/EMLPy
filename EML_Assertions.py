@@ -47,7 +47,8 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_104(self):
 		eml=EmotionML()
 		item=Item('anger')
-		voc=Vocabulary(self, 'category', 'big6', item)
+		voc=Vocabulary('category', 'big6', item)
+		eml.vocabularies.append(voc)
 		emxml=eml.to_xml().toprettyxml()
 		print "%%%%%%%%%%%%%%%%%%%%%%%%%%%"
 		print emxml
@@ -1167,7 +1168,7 @@ class TestEMLAssertions(unittest.TestCase):
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
-		except TypeError, ValueError:
+		except ValueError:
 			pass
 		else:
 			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
