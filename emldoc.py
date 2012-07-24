@@ -309,7 +309,7 @@ class Vocabulary:
       if self.items:
          check_uniqueness( self.items,"vocabulary "+self.id )
 
-      for item in items:
+      for item in self.items:
          voc.appendChild(item.to_xml(doc))
       return voc
 
@@ -338,6 +338,7 @@ class Item:
 
       if self.info:
          item.appendChild(self.info.to_xml(doc))
+      return item
 
 class Representation:
    """ This class is an abstract representation (i.e. there is no such element 
