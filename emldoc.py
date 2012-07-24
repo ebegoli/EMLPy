@@ -36,6 +36,7 @@ class EmotionML:
       self.dimension_set = None
       self.appraisal_set = None
       self.action_tendency_set = None
+      self.vocabularies = None
 
    def to_xml(self):
       """ Generates representation for the whole document with validations """
@@ -59,6 +60,9 @@ class EmotionML:
 
       if self.info:
          em.appendChild(self.info.to_xml(doc))
+
+      for vocabulary in self.vocabularies:
+         em.appendChild(vocabulary.to_xml(doc))
      
       for emotion in self.emotions:
          # see if there are any undefined sets and if so, if defined at this level
@@ -135,6 +139,9 @@ class Emotion:
       self.dimension_set = None
       self.appraisal_set = None
       self.action_tendency_set = None
+      self.content = None
+
+      self.vocabularies = None
       
       self.categories = []
       self.dimensions = []
@@ -197,6 +204,9 @@ class Emotion:
          else:
            emo.setAttribute("version",self.version)
 
+      for vocabulary in self.vocabularies:
+         emo.appendChild(vocabulary.to_xml(doc))
+
       if self.category_set:
          emo.setAttribute("category-set",self.category_set)
       if self.dimension_set:
@@ -256,6 +266,10 @@ class Emotion:
          emo.setAttribute('expressed-through', str(self.expressed_through))
       if self.info:
          emo.appendChild(self.info.to_xml(doc))
+
+      if self.content and len(str(self.content).strip()) > 0:
+         emo_text = doc.createTextNode(str(self.content))
+         emo.appendChild(emo_text)
 
       return emo
 
