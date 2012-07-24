@@ -36,7 +36,7 @@ class EmotionML:
       self.dimension_set = None
       self.appraisal_set = None
       self.action_tendency_set = None
-      self.vocabularies = None
+      self.vocabularies = []
 
    def to_xml(self):
       """ Generates representation for the whole document with validations """
@@ -141,7 +141,7 @@ class Emotion:
       self.action_tendency_set = None
       self.content = None
 
-      self.vocabularies = None
+      self.vocabularies = []
       
       self.categories = []
       self.dimensions = []
@@ -294,7 +294,7 @@ class Vocabulary:
          raise ValueError( 'type attribute has to be set on a vocabulary %s' % self.id )
       if self.type not in representations:
          raise TypeError( 'type %s attribute on vocabulary %s has to be one of the representations %s' % 
-            self.type, self.id, map(str,representations) )
+           ( self.type, self.id, map(str,representations)))
 
       voc.setAttribute('id',str(self.id))
       voc.setAttribute('type',str(self.type))
