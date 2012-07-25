@@ -1332,15 +1332,57 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		self.fail( printOutcome("602", 'fail', 'A <vocabulary> element MUST contain a "type" attribute'))
 
-	#TODO
-	'''
 	def test_603(self):
+		try:
+			item= []
+			eml=EmotionML()
+			item.append(Item('anger'))
+			voc=Vocabulary('NotAType', 'big6', item)
+			eml.vocabularies.append(voc)
+			emxml=eml.to_xml().toprettyxml()
+			doc=parseString(emxml)
+		except:
+			print printOutcome('603', 'pass', 'The value of the "type" attribute of the <vocabulary> element MUST be one of "category", "dimension", "action-tendency" or "appraisal".')
+			return
+		self.fail(printOutcome('603', 'pass', 'The value of the "type" attribute of the <vocabulary> element isn\'t required to be one of "category", "dimension", "action-tendency" or "appraisal".'))
+		
 	def test_604(self):
-	def test_605(self):
+		try:
+			eml=EmotionML()
+			item=[]
+			item.append(Item('approach'))
+			voc=Vocabulary(type='action-tendency', items= item)
+			eml.vocabularies.append(voc)
+			eml.to_xml().toprettyxml()
+		except TypeError:
+			print printOutcome("604", 'pass', 'A <vocabulary> element MUST contain an "id" attribute')
+			return
+		self.fail( printOutcome("604", 'fail', 'A <vocabulary> element does not have to contain an "id" attribute'))
+
+	#TODO
+	'''def test_605(self):'''
+	#TODO
+	#Need to finish
 	def test_606(self):
+		eml=EmotionML()
+		item=[]
+		info= '<meta:media-type>image</meta:media-type>'
+		item.append(Item('approach'))
+		voc=Vocabulary('action-tendency', 'frijda-subset', item)
+		eml.vocabularies.append(voc)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		print emxml
+			
+		'''print printOutcome("604", 'pass', 'A <vocabulary> element MUST contain an "id" attribute')
+		return
+	self.fail( printOutcome("604", 'fail', 'A <vocabulary> element does not have to contain an "id" attribute'))'''
+	'''
+	
 	def test_607(self):
 	def test_608(self):
-	def test_700(self):'''
+	def test_700(self):
+	'''
 		
 
 
