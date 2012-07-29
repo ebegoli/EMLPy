@@ -65,7 +65,6 @@ if __name__ == "__main__":
         emotion.dimensions.append(rep4)
         emotion.info = info
         emotion.references.append(reference)
-        print emotion.get_undefined_sets()
 
         #just for control purposes
         #print emotion.to_xml(emotionml.to_xml()).toprettyxml()

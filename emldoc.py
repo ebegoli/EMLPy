@@ -62,14 +62,12 @@ class EmotionML:
       for emotion in self.emotions:
          # see if there are any undefined sets and if so, if defined at this level
          undef_sets = emotion.get_undefined_sets()
-         self.check_if_defined(undef_sets, emotion
+         self.check_if_defined(undef_sets, emotion)
          # 1. find references with no local vocabulary
          # 2. iterate over this and see if they map to global vocabularies
          # 3. if no global voc. found - raise exception
          if emotion.has_missing_vocabulary_items():
-            print "missing some local %s " % str(emotion.missing)
             if emotion.has_missing_global_vocabulary_items( self.vocabularies ):
-               print "missing some global"
                raise TypeError( "emotion %s is missing vocabulary definitions for %s. " % 
                   (emotion.emotion_id, str(emotion.global_missing) ))
          em.appendChild(emotion.to_xml(doc))
@@ -278,35 +276,27 @@ class Emotion:
       return emo
 
    def has_missing_global_vocabulary_items(self, global_vocabularies ):
-      #TODO: rewrite this
       """ Query function looks into defined representations and related sets
       and looks up vocabularies to check if representations are defined """
       self.global_missing = []
       for rep in self.missing: 
          if rep[1] and rep[0]:
-            #TODO: this step can be factored out
             if not global_vocabularies:
                self.global_missing.append(rep)
             else:
                for repr in rep[1]:
                   if not self.is_defined_on_vocabulary( repr, rep[0], global_vocabularies  ):
-                     print "globally missing %s " % rep[1]
                      self.global_missing.append(rep)
-      print "is global not none: %s " % str(self.global_missing is not None)
-      print "global: %s " % str(self.global_missing)
       return (self.global_missing)
 
    def has_missing_vocabulary_items(self):
-      #TODO: rewrite this
       """ Query function looks into defined representations and related sets
       and looks up vocabularies to check if representations are defined """
       for rep in ((self.category_set,self.categories),
          (self.dimension_set,self.dimensions), 
          (self.appraisal_set,self.appraisals),
          (self.action_tendency_set,self.action_tendencies)):
-         print "rep[0]: %s rep[1]: %s" % (str(rep[0]),str(rep[1])) 
          if rep[1] and rep[0]:
-            #TODO: this step can be factored out
             if not self.vocabularies:
                self.missing.append(rep)
             else:
@@ -317,7 +307,6 @@ class Emotion:
 
    def has_vocabulary_references(self, set_name, vocabularies):
       """ Checks if set name refers to an actual vocabulary """
-      #look iterate over local vo 
       return find( lambda vocab: vocab.id in set_name, vocabularies )
 
 
@@ -325,7 +314,6 @@ class Emotion:
       """ looks into vocabulary with known set name for definitions of items
       as found on representations """
       vocabulary = find(lambda vocab: vocab.id == set_name, vocabularies)
-      print "found vocabulary %s for set %s " % (str( vocabulary ),set_name )
       if not vocabulary:
          return False
       if find( lambda item: item.name == representation.name,vocabulary.items):
@@ -486,7 +474,8 @@ class Info:
    def to_xml(self,doc):
       """  Constructs <info> element with id attribute and text content """
       info = doc.createElement('info')
-      info.setAttribute('id',self.id)
+      if self.id:
+         info.setAttribute('id',self.id)
       if self.content and len(str(self.content).strip()) > 0:
          info_text = doc.createTextNode(str(self.content))
          info.appendChild(info_text)
@@ -593,9 +582,7 @@ def check_uniqueness( elements, context ):
 def find(f, seq):
    """Return first item in sequence where f(item) == True."""
    for item in seq:
-      print "in find %s " % str(item)
       if f(item):
-         print "found item " + str(item) 
          return item
 
 def has_same_name( elements ):

@@ -865,6 +865,9 @@ class TestEMLAssertions(unittest.TestCase):
 		eml= EmotionML()
 		try:
 			emo= Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("nonattending")]))
+			emo.action_tendency_set="act"
 			rep=Representation('nonattending', 'action-tendency')
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
@@ -872,7 +875,6 @@ class TestEMLAssertions(unittest.TestCase):
 		
 		except:
 			pass
-			
 		else:
 			self.fail( printOutcome("240", 'fail', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.'))
 		
@@ -1165,12 +1167,12 @@ class TestEMLAssertions(unittest.TestCase):
 	#will need to define the type of exception once created	
 	def test_502(self):
 		""" Test validity of the freq format """
-
 		#negative float
  		try:
 			eml=EmotionML()
-			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 			emo=Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 			trace=Trace('-.5Hz', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
@@ -1184,14 +1186,15 @@ class TestEMLAssertions(unittest.TestCase):
 		#negative float with space
 		try:
 			eml=EmotionML()
-			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 			emo=Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 			trace=Trace('-.5 Hz', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
-		except TypeError, ValueError:
+		except (TypeError, ValueError):
 			pass
 		else:
 			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
@@ -1199,14 +1202,15 @@ class TestEMLAssertions(unittest.TestCase):
 		# no Hz
 		try:
 			eml=EmotionML()
-			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 			emo=Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 			trace=Trace('.5', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
-		except TypeError, ValueError:
+		except (TypeError, ValueError):
 			pass
 		else:
 			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
@@ -1214,14 +1218,15 @@ class TestEMLAssertions(unittest.TestCase):
 		#Wrong unit
 		try:
 			eml=EmotionML()
-			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 			emo=Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 			trace=Trace('.5 Kz', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
-		except TypeError, ValueError:
+		except (TypeError, ValueError):
 			pass
 		else:
 			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
@@ -1230,15 +1235,16 @@ class TestEMLAssertions(unittest.TestCase):
 		#wrong unit at the end
 		try:
 			eml=EmotionML()
-			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 			emo=Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 			trace=Trace('.5 Hz Kz', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()	
 
-		except TypeError, ValueError:
+		except (TypeError, ValueError):
 			pass
 		else:
 			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
@@ -1247,22 +1253,24 @@ class TestEMLAssertions(unittest.TestCase):
 		# wrong float value
 		try:
 			eml=EmotionML()
-			eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 			emo=Emotion()
+			emo.action_tendency_set="act"
+			emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 			trace=Trace('Az Hz', [.6, .4, .8])
 			rep=Representation('power', 'action-tendency', trace)
 			emo.action_tendencies.append(rep)
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()		
-		except TypeError, ValueError:
+		except (TypeError, ValueError):
 			pass
 		else:
 			self.fail( printOutcome("502", 'fail', 'The value of the "freq" attribute of <trace> MUST be a positive floating point number followed by optional whitespace followed by "Hz".'))
 
 		# these are all good
 		eml=EmotionML()
-		eml.action_tendency_set="http://www.w3.org/TR/emotion-voc/xml#frijda-action-tendencies"
 		emo=Emotion()
+		emo.action_tendency_set="act"
+		emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 		trace=Trace('10.5Hz', [.6, .4, .8])
 		rep=Representation('power', 'action-tendency', trace)
 		emo.action_tendencies.append(rep)
@@ -1271,15 +1279,18 @@ class TestEMLAssertions(unittest.TestCase):
 
 		eml=EmotionML()
 		emo=Emotion()
+		emo.action_tendency_set="act"
+		emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 		trace=Trace('10.5 Hz', [.6, .4, .8])
 		rep=Representation('power', 'action-tendency', trace)
 		emo.action_tendencies.append(rep)
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
-
 		
 		eml=EmotionML()
 		emo=Emotion()
+		emo.action_tendency_set="act"
+		emo.vocabularies.append(Vocabulary("action-tendency","act",[Item("power")]))
 		trace=Trace('.5 Hz', [.6, .4, .8])
 		rep=Representation('power', 'action-tendency', trace)
 		emo.action_tendencies.append(rep)
