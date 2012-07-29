@@ -56,6 +56,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
         emotion.info = info
         emotion.references.append(reference)
 
+
         #just for control purposes
         #print emotion.to_xml(emotionml.to_xml()).toprettyxml()
         

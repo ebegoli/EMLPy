@@ -43,12 +43,10 @@ class EmotionML:
       doc = xml.dom.minidom.Document()
       em = doc.createElement('emotionml')
       em.setAttribute("xmlns", "http://www.w3.org/2009/10/emotionml")
-
       if (self.version is None) or ("1.0" != self.version.strip()):
          raise ValueError('Version on emotionml has to be 1.0. Value %s for version is not valid.' % self.version )
       else:
          em.setAttribute("version",self.version)
- 
       if self.category_set:
          em.setAttribute("category-set",self.category_set)
       if self.dimension_set:
@@ -57,17 +55,23 @@ class EmotionML:
          em.setAttribute("appraisal-set",self.appraisal_set)
       if self.action_tendency_set:
          em.setAttribute("action-tendency-set",self.action_tendency_set)
-
       if self.info:
          em.appendChild(self.info.to_xml(doc))
-
       for vocabulary in self.vocabularies:
          em.appendChild(vocabulary.to_xml(doc))
-     
       for emotion in self.emotions:
          # see if there are any undefined sets and if so, if defined at this level
          undef_sets = emotion.get_undefined_sets()
-         self.check_if_defined(undef_sets, emotion)
+         self.check_if_defined(undef_sets, emotion
+         # 1. find references with no local vocabulary
+         # 2. iterate over this and see if they map to global vocabularies
+         # 3. if no global voc. found - raise exception
+         if emotion.has_missing_vocabulary_items():
+            print "missing some local %s " % str(emotion.missing)
+            if emotion.has_missing_global_vocabulary_items( self.vocabularies ):
+               print "missing some global"
+               raise TypeError( "emotion %s is missing vocabulary definitions for %s. " % 
+                  (emotion.emotion_id, str(emotion.global_missing) ))
          em.appendChild(emotion.to_xml(doc))
       doc.appendChild(em)
       return doc
@@ -142,6 +146,7 @@ class Emotion:
       self.content = None
 
       self.vocabularies = []
+      self.missing = []
       
       self.categories = []
       self.dimensions = []
@@ -191,7 +196,6 @@ class Emotion:
       if not (self.categories or self.dimensions 
          or self.appraisals or self.action_tendencies):
          raise ValueError('At least one of the category or dimension or appraisal or action-tendency must be provided')
-
 
       check_uniqueness( self.action_tendencies, "action-tendency" )
       check_uniqueness( self.categories, "category" )
@@ -273,6 +277,62 @@ class Emotion:
 
       return emo
 
+   def has_missing_global_vocabulary_items(self, global_vocabularies ):
+      #TODO: rewrite this
+      """ Query function looks into defined representations and related sets
+      and looks up vocabularies to check if representations are defined """
+      self.global_missing = []
+      for rep in self.missing: 
+         if rep[1] and rep[0]:
+            #TODO: this step can be factored out
+            if not global_vocabularies:
+               self.global_missing.append(rep)
+            else:
+               for repr in rep[1]:
+                  if not self.is_defined_on_vocabulary( repr, rep[0], global_vocabularies  ):
+                     print "globally missing %s " % rep[1]
+                     self.global_missing.append(rep)
+      print "is global not none: %s " % str(self.global_missing is not None)
+      print "global: %s " % str(self.global_missing)
+      return (self.global_missing)
+
+   def has_missing_vocabulary_items(self):
+      #TODO: rewrite this
+      """ Query function looks into defined representations and related sets
+      and looks up vocabularies to check if representations are defined """
+      for rep in ((self.category_set,self.categories),
+         (self.dimension_set,self.dimensions), 
+         (self.appraisal_set,self.appraisals),
+         (self.action_tendency_set,self.action_tendencies)):
+         print "rep[0]: %s rep[1]: %s" % (str(rep[0]),str(rep[1])) 
+         if rep[1] and rep[0]:
+            #TODO: this step can be factored out
+            if not self.vocabularies:
+               self.missing.append(rep)
+            else:
+               for repr in rep[1]:
+                  if not self.is_defined_on_vocabulary( repr, rep[0], self.vocabularies  ):
+                     self.missing.append(rep)
+      return (self.missing)
+
+   def has_vocabulary_references(self, set_name, vocabularies):
+      """ Checks if set name refers to an actual vocabulary """
+      #look iterate over local vo 
+      return find( lambda vocab: vocab.id in set_name, vocabularies )
+
+
+   def is_defined_on_vocabulary(self, representation, set_name, vocabularies):
+      """ looks into vocabulary with known set name for definitions of items
+      as found on representations """
+      vocabulary = find(lambda vocab: vocab.id == set_name, vocabularies)
+      print "found vocabulary %s for set %s " % (str( vocabulary ),set_name )
+      if not vocabulary:
+         return False
+      if find( lambda item: item.name == representation.name,vocabulary.items):
+         return True
+      else:
+         return False
+
 class Vocabulary:
    """ Contains the definition of an emotion vocabulary - <vocabulary>  """
    def __init__(self,type,id,items,info=None):
@@ -283,7 +343,7 @@ class Vocabulary:
 
    def __str__(self):
       """ Returns string representation of the vocabulary """
-      return "type:%s id:%s info:%s" % (self.type,self.id,map(str,this.items))
+      return "type:%s id:%s info:%s" % (self.type,self.id,map(str,self.items))
 
    def to_xml(self, doc):
       """ Produces a <vocabulary> element """
@@ -528,7 +588,15 @@ def check_uniqueness( elements, context ):
    and throws validation exception is names are not unique """
    if has_same_name( elements ):
       raise ValueError('Not all names of %s are unique: %s' % 
-         (  context, map(str,elements ) )) 
+         (  context, map(str,elements ) ))
+
+def find(f, seq):
+   """Return first item in sequence where f(item) == True."""
+   for item in seq:
+      print "in find %s " % str(item)
+      if f(item):
+         print "found item " + str(item) 
+         return item
 
 def has_same_name( elements ):
    """ Checks if the names of the elements are same
