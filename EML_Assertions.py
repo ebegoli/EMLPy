@@ -785,7 +785,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("231", 'pass', 'An appraisal element contains a "name" attribute.')
 	
 	#TODO
-	#waiting on issue to be resolved before implementing
+	#Don't know how to do this
 	'''def test_232(self):'''
 	
 	def test_233(self):
@@ -913,7 +913,8 @@ class TestEMLAssertions(unittest.TestCase):
 		action_tendencies= doc.getElementsByTagName('action-tendency')
 		self.assertTrue(action_tendencies[0].getAttribute('name'), printOutcome("241", 'fail', 'An action-tendency element does not contain a "name" attribute.'))
 		print printOutcome("241", 'pass', 'An action-tendency element contains a "name" attribute.')
-	
+	#TODO
+	#Work with this
 	def test_242(self):
 		try:
 			eml=EmotionML()
@@ -1159,6 +1160,8 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		self.fail( printOutcome("501", 'fail', 'The <trace> element doesn\'t require a "freq" attribute.'))
 	
+	
+
 	#will need to define the type of exception once created	
 	def test_502(self):
 		""" Test validity of the freq format """
@@ -1301,8 +1304,8 @@ class TestEMLAssertions(unittest.TestCase):
 
 #TODO
 #Need implemented
-
 	'''def test_504(self):'''
+	
 	def test_600(self):
 		try:
 			eml=EmotionML()
@@ -1314,10 +1317,20 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		self.fail( printOutcome("600", 'fail', 'A <vocabulary> element MUST contain one or more <item> elements.'))
 
-	#TODO
-	#Implement these
-	'''def test_601(self):'''
-
+	def test_601(self):
+		eml=EmotionML()
+		items=[]
+		item=Item('approach')
+		items.append(item)
+		info= Info('someID')
+		info2=Info('otherID')
+		voc=Vocabulary('action-tendency', 'frijda-subset', items, info)
+		voc.info=info2
+		eml.vocabularies.append(voc)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertEqual(len(doc.getElementsByTagName('info')), 1, printOutcome("601", 'fail', 'A <vocabulary> element MAY contain a single <info> element.'))
+		print printOutcome("601", 'pass', 'A <vocabulary> element MAY contain a single <info> element.')
 
 	def test_602(self):
 		try:
@@ -1332,15 +1345,83 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		self.fail( printOutcome("602", 'fail', 'A <vocabulary> element MUST contain a "type" attribute'))
 
-	#TODO
-	'''
 	def test_603(self):
+		try:
+			item= []
+			eml=EmotionML()
+			item.append(Item('anger'))
+			voc=Vocabulary('NotAType', 'big6', item)
+			eml.vocabularies.append(voc)
+			emxml=eml.to_xml().toprettyxml()
+			doc=parseString(emxml)
+		except:
+			print printOutcome('603', 'pass', 'The value of the "type" attribute of the <vocabulary> element MUST be one of "category", "dimension", "action-tendency" or "appraisal".')
+			return
+		self.fail(printOutcome('603', 'pass', 'The value of the "type" attribute of the <vocabulary> element isn\'t required to be one of "category", "dimension", "action-tendency" or "appraisal".'))
+		
 	def test_604(self):
-	def test_605(self):
+		try:
+			eml=EmotionML()
+			item=[]
+			item.append(Item('approach'))
+			voc=Vocabulary(type='action-tendency', items= item)
+			eml.vocabularies.append(voc)
+			eml.to_xml().toprettyxml()
+		except TypeError:
+			print printOutcome("604", 'pass', 'A <vocabulary> element MUST contain an "id" attribute')
+			return
+		self.fail( printOutcome("604", 'fail', 'A <vocabulary> element does not have to contain an "id" attribute'))
+
+	#TODO
+	'''def test_605(self):'''
+
 	def test_606(self):
+		eml=EmotionML()
+		items=[]
+		info= Info('someID')
+		item=Item('approach', info)
+		info2=Info('otherID')
+		item.info=info2
+		items.append(item)
+		voc=Vocabulary('action-tendency', 'frijda-subset', items)
+		eml.vocabularies.append(voc)
+		emxml=eml.to_xml().toprettyxml()
+		doc=parseString(emxml)
+		self.assertEqual(len(doc.getElementsByTagName('info')), 1, printOutcome("606", 'fail', 'An <item> element MAY contain a single <info> element.'))
+		print printOutcome("606", 'pass', 'An <item> element MAY contain a single <info> element.')
+
 	def test_607(self):
+		try:
+			eml=EmotionML()
+			item=[]
+			item.append(Item())
+			voc=Vocabulary(type='action-tendency', items= item)
+			eml.vocabularies.append(voc)
+			eml.to_xml().toprettyxml()	
+		except TypeError:
+			print printOutcome("607", 'pass', 'An <item> element MUST contain a "name" attribute.')
+			return
+		self.fail( printOutcome("607", 'fail', 'An <item> element is not required to contain a "name" attribute.'))
+	
 	def test_608(self):
-	def test_700(self):'''
+		try:
+			item= []
+			eml=EmotionML()
+			item.append(Item('anger'))
+			item.append(Item('disgust'))
+			item.append(Item('anger'))
+			voc=Vocabulary('category', 'big6', item)
+			eml.vocabularies.append(voc)
+			emxml=eml.to_xml().toprettyxml()
+			doc=parseString(emxml)
+		except ValueError:
+			print printOutcome('608', 'pass', 'An <item> MUST NOT have the same name as any other <item> within the same <vocabulary>.')
+			return
+		self.fail(printOutcome('608', 'fail', 'An <item> MUST NOT have the same name as any other <item> within the same <vocabulary>.'))
+
+
+	#TODO
+	'''def test_700(self):'''
 		
 
 
