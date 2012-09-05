@@ -75,4 +75,21 @@ if __name__ == "__main__":
         emxml = emotionml.to_xml().toprettyxml()
         print emxml
 
+        eml=EmotionML()
+        emo=Emotion()
+        emo.emotion_id = "test"
+        emo.category_set="http://www.w3.org/TR/emotion-voc/xml#big6"
+        emo.category_set="big6"
+        items=[]
+        item=Item('happiness')
+        items.append(item)
+        item=Item('anger')
+        items.append(item)
+        voc=Vocabulary('category','big6', items)
+        eml.vocabularies.append(voc)
+
+        rep=Representation('happiness', 'category')
+        emo.categories.append(rep)
+        eml.emotions.append(emo)
+        print eml.to_xml().toprettyxml()
 

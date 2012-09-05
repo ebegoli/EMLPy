@@ -21,6 +21,7 @@ An EmotionML document generator
 __author__ = 'Edmon Begoli'
 
 import sys
+import re
 import xml.dom.minidom
 
 representations = ('dimension', 'category','appraisal', 'action-tendency')
@@ -61,15 +62,15 @@ class EmotionML:
          em.appendChild(vocabulary.to_xml(doc))
       for emotion in self.emotions:
          # see if there are any undefined sets and if so, if defined at this level
-         undef_sets = emotion.get_undefined_sets()
-         self.check_if_defined(undef_sets, emotion)
+         #undef_sets = emotion.get_undefined_sets()
+         #self.check_if_defined(undef_sets, emotion)
          # 1. find references with no local vocabulary
          # 2. iterate over this and see if they map to global vocabularies
          # 3. if no global voc. found - raise exception
-         if emotion.has_missing_vocabulary_items():
-            if emotion.has_missing_global_vocabulary_items( self.vocabularies ):
-               raise TypeError( "emotion %s is missing vocabulary definitions for %s. " % 
-                  (emotion.emotion_id, str(emotion.global_missing) ))
+         #if emotion.has_missing_vocabulary_items():
+         #   if emotion.has_missing_global_vocabulary_items( self.vocabularies ):
+         #      raise TypeError( "emotion %s is missing vocabulary definitions for %s. " % 
+         #         (emotion.emotion_id, str(emotion.global_missing) ))
          em.appendChild(emotion.to_xml(doc))
       doc.appendChild(em)
       return doc
@@ -301,7 +302,8 @@ class Emotion:
                self.missing.append(rep)
             else:
                for repr in rep[1]:
-                  if not self.is_defined_on_vocabulary( repr, rep[0], self.vocabularies  ):
+                  print "is uri " + self.is_uri( rep[0]) 
+                  if not self.is_uri( rep[0]) and not self.is_defined_on_vocabulary( repr, rep[0], self.vocabularies  ):
                      self.missing.append(rep)
       return (self.missing)
 
@@ -584,6 +586,17 @@ def find(f, seq):
    for item in seq:
       if f(item):
          return item
+
+def is_uri( something ):
+   ''' Checks if the string points to some url '''
+   regex = re.compile(
+        r'^(?:http|ftp)s?://' # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+        r'localhost|' #localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+        r'(?::\d+)?' # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+   return something is not None and regex.search(something)
 
 def has_same_name( elements ):
    """ Checks if the names of the elements are same

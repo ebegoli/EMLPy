@@ -95,13 +95,13 @@ class TestEmotionMLGeneration(unittest.TestCase):
         doc = Document() 
         rep = Representation('test dim 2','dimension')
         rep.value = '100'
-        rep.trace = Trace(4,['0.5','0.6','0.7'])
+        rep.trace = Trace('4Hz',['0.5','0.6','0.7'])
         rep.name = 'happiness'
         rep.confidence = '0.8'
         self.assertRaises(ValueError, rep.to_xml, doc)
 
         doc = Document() 
-        trace = Trace(5,['0.5','0.6','0.7'])
+        trace = Trace('5Hz',['0.5','0.6','0.7'])
         rep = Representation(name='test dim 3',representation='dimension',
                 trace=trace,confidence='0.8')
 
@@ -197,18 +197,22 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	#category
 	rep=Representation(name='fear', representation='category', value='.05', confidence='.8')
 	emotion.categories.append(rep)
+	emotion.category_set="http://www.w3.org/TR/emotion-voc/xml#everyday-categories"
 	
 	#dimension
 	rep=Representation(name="unpredictability", representation='dimension', confidence='.5', value='.04')
 	emotion.dimensions.append(rep)
+	eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
 	
 	#action-tendency
 	rep=Representation(name="avoidance", representation='action-tendency', confidence='.3', value='.4')
 	emotion.action_tendencies.append(rep)
+	eml.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
 
 	#Appraisal
 	rep=Representation(name='unexpectedness', representation='appraisal', confidence='.2', value='.09')
 	emotion.appraisals.append(rep)
+	emotion.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
 	eml.emotions.append(emotion)
 	
 	#See what the structure is at this point
@@ -363,7 +367,10 @@ class TestEmotionMLGeneration(unittest.TestCase):
 	emotion.dimensions.append(rep)
 	emoML.emotions.append(emotion)
 	#print emoML.to_xml().toprettyxml()
-	
+
+   def test_is_uri(self):
+   	uri = "http://www.google.com"
+   	self.assertTrue( is_uri( uri ), uri + " is valid URI ")
 	
 if __name__ == '__main__':
         unittest.main()
