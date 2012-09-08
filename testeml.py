@@ -371,6 +371,31 @@ class TestEmotionMLGeneration(unittest.TestCase):
    def test_is_uri(self):
    	uri = "http://www.google.com"
    	self.assertTrue( is_uri( uri ), uri + " is valid URI ")
+
+   def test_if_float(self):
+   	val1 = "0.4"
+   	val3 = "z"
+   	val4 = "10e5"
+   	val5 = "1z"
+   	self.assertTrue( is_float(val1), val1 + " is float" )
+   	self.assertFalse( is_float(val3), val3 + " is not float" )
+   	self.assertTrue( is_float(val4), val4 + " is float" )
+   	self.assertFalse( is_float(val5), val5 + " is float" )
+
+
+   def test_if_float_interval(self):
+   	val1 = 0.4
+   	val2 = -0.5
+   	val3 = 0
+   	val4 = 1
+   	val5 = 0.999999999999
+   	val6 = 999999999999   	
+   	self.assertTrue( is_within_interval(val1), str(val1) + " is within [0,1]" )
+   	self.assertFalse( is_within_interval(val2),str( val2) + " is not within [0,1]" )
+   	self.assertFalse( is_within_interval(val3), str(val3) + " is not within [0,1]" )
+   	self.assertFalse( is_within_interval(val4), str(val4) + " is not within [0,1]" )
+   	self.assertTrue( is_within_interval(val5), str(val5) + " is within [0,1]" )
+   	self.assertFalse( is_within_interval(val6), str(val6) + " is not within [0,1]" )
 	
 if __name__ == '__main__':
         unittest.main()

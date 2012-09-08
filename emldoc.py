@@ -38,6 +38,7 @@ class EmotionML:
       self.appraisal_set = None
       self.action_tendency_set = None
       self.vocabularies = []
+      self.content = ""
 
    def to_xml(self):
       """ Generates representation for the whole document with validations """
@@ -48,6 +49,10 @@ class EmotionML:
          raise ValueError('Version on emotionml has to be 1.0. Value %s for version is not valid.' % self.version )
       else:
          em.setAttribute("version",self.version)
+
+      if self.content:
+         em_text = doc.createTextNode(str(self.content))
+         em.appendChild(em_text)
       if self.category_set:
          em.setAttribute("category-set",self.category_set)
       if self.dimension_set:
@@ -227,6 +232,8 @@ class Emotion:
          for item in child:
             emo.appendChild(item.to_xml(doc))
       if self.emotion_id:
+         if not is_ID(self.emotion_id):
+            raise ValueError( "id %s on emotion is not of type xsd:id." % str(self.emotion_id) )
          emo.setAttribute('id', str(self.emotion_id))
       
       if self.start:
@@ -346,6 +353,10 @@ class Vocabulary:
          raise TypeError( 'type %s attribute on vocabulary %s has to be one of the representations %s' % 
            ( self.type, self.id, map(str,representations)))
 
+
+      if not is_ID( self.id ): 
+         raise TypeError( 'id %s on vocabulary %s is not valid xsd:id.' % (self.id,self.type) )
+      
       voc.setAttribute('id',str(self.id))
       voc.setAttribute('type',str(self.type))
 
@@ -477,6 +488,8 @@ class Info:
       """  Constructs <info> element with id attribute and text content """
       info = doc.createElement('info')
       if self.id:
+         if not is_ID( self.id ):
+            raise ValueError('Id %s on <info> element is not of xsd:id type ' % str(self.id))
          info.setAttribute('id',self.id)
       if self.content and len(str(self.content).strip()) > 0:
          info_text = doc.createTextNode(str(self.content))
@@ -517,6 +530,11 @@ class Trace:
       if not self.samples:
          raise ValueError('Trace element requires samples attribute. It was not set.')
       else:
+         for sample in self.samples:
+            if not is_float(sample):
+               raise ValueError('Sample %d on a trace is not a valid floating point number.' % sample )
+            if not is_within_interval(float(sample)):
+               raise ValueError('Sample %d on a trace is not within [0,1] interval.' % sample )
          trace.setAttribute('samples',' '.join(map(str,self.samples)))
       return trace
 
@@ -569,6 +587,17 @@ def is_positive_int(s):
    except ValueError:
         return False
 
+def is_float( val ):
+   """ Simple float check """
+   try: 
+        float( val )
+        return True
+   except ValueError:
+        return False
+def is_within_interval( val,start=0.0,end=1.0):
+   """ checks if the value is within an interval pass"""
+   return (start < val < end)
+
 def validate_dimension(dim):
    """ Checks that dimension value is provided"""
    if not (dim.value): 
@@ -586,6 +615,11 @@ def find(f, seq):
    for item in seq:
       if f(item):
          return item
+
+def is_ID( val ):
+   """ Checks if the value is valid xsd:id """
+   reg = re.compile(r'^[a-zA-Z_][\w.-]*$')
+   return reg.match( val )
 
 def is_uri( something ):
    ''' Checks if the string points to some url '''
