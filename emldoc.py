@@ -17,12 +17,12 @@ limitations under the License.
 '''
 An EmotionML document generator
 '''
-
 __author__ = 'Edmon Begoli'
 
 import sys
 import re
 import xml.dom.minidom
+import urllib2
 
 representations = ('dimension', 'category','appraisal', 'action-tendency')
 
@@ -561,6 +561,8 @@ class Reference:
       ref = doc.createElement('reference')
       ref.setAttribute('uri',str(self.uri))
       if self.media_type:
+         if not has_media_type( self.media_type ):
+            raise TypeError( "media type ("+self.media_type+") is not recognized." )
          ref.setAttribute('media-type',str(self.media_type))
       #if role is set, make sure it is one of accepted values
       if self.role:
@@ -637,3 +639,30 @@ def has_same_name( elements ):
    """ 
    name = [element.name for element in elements ]
    return len(set(name)) < len(name)
+
+def has_media_type( media_type):
+   ''' Checks media type such as 'application/atom+xml' against iana.org.
+   It queries the web site  http://www.iana.org/assignments/media-types/application
+   and searches for atom+xml on the web page. '''
+   import urllib2
+   media_parts = media_type.split('/')
+
+   search_url="http://www.iana.org/assignments/media-types/"+media_parts[0]
+   results = None
+   try:
+      results=urllib2.urlopen(search_url)
+   except urllib2.HTTPError as he:
+      print "In has_media_type got %s for %s." % (he,search_url)
+      return False
+
+   found = False
+   for l in results.readlines():
+      try:
+         if l.count(media_parts[1])>0:
+            found = True
+            break
+      except UnicodeDecodeError:
+         print "Ignoring UnicodeDecodeError in has_media_type"
+   results.close()
+   return found
+

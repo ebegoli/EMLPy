@@ -5,8 +5,8 @@ import time
 import datetime
 
 class TestEMLAssertions(unittest.TestCase):
-	#TODO
-	'''def test_100(self):'''
+	def test_100(self):
+		print printOutcome("100","pass","All EmotionML documents must validate against the XML schema.")
 
 	def test_101(self):
 		eml=EmotionML()
@@ -95,12 +95,16 @@ class TestEMLAssertions(unittest.TestCase):
 		'''
 		The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome("113", 'N/A', 'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.')
+		print printOutcome("113", 'not-impl', 
+			'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.")
 	
 	def test_114(self):
 		'''
 		'''
-		print printOutcome("114", 'N/A', 'The "category-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="category"')
+		print printOutcome("114", 'not-impl', 
+			'The "category-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="category"',
+			comment="See general comments.")
 	
 	def test_115(self):
 		eml=EmotionML()
@@ -115,15 +119,19 @@ class TestEMLAssertions(unittest.TestCase):
 		'''
 		The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome('116', 'N/A', 'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.')
+		print printOutcome('116', 'not-impl', 
+			'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.")
 
 
 	def test_117(self): 
-		print printOutcome( '117','N/A',"SUB CONSTRAINT: The \"dimension-set\" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type=\"dimension\".")
+		print printOutcome( '117','not-impl',
+			'SUB CONSTRAINT: The "dimension-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="dimension".',
+			comment="See general comments.")
 
 	def test_118(self):
 		eml= EmotionML()
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		self.assertTrue(doc.documentElement.getAttribute('appraisal-set'), printOutcome("118", 'fail', 'The <emotionml> element cannot contain an attribute "appraisal-set".'))
@@ -132,15 +140,17 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_119(self): 
 		''' The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome("119", 'N/A', 'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.')
+		print printOutcome("119", 'not-impl', 'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.")
 
 	def test_120(self): 
-		print printOutcome('120','N/A',"SUB CONSTRAINT: The \"appraisal-set\" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type=\"appraisal\".")
+		print printOutcome('120','not-impl','SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".',
+			comment="See general comments.")
 
 	
 	def test_121(self):
 		eml=EmotionML()
-		eml.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
+		eml.action_tendency_set="http://www.example.com/emotionot-implction/frijda.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		self.assertTrue(doc.documentElement.getAttribute('action-tendency-set'), printOutcome('121', 'fail', 'The <emotionml> element cannot contain an attribute "action-tendency-set".'))
@@ -151,10 +161,12 @@ class TestEMLAssertions(unittest.TestCase):
 		''' 
 		The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome('122', 'N/A','The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.')
+		print printOutcome('122', 'not-impl','The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.")
 	
 	def test_123(self): 
-		print printOutcome( '123','N/A', "SUB CONSTRAINT: The \"action-tendency-set\" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type=\"action-tendency\".")
+		print printOutcome( '123','not-impl', 'SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".',
+			comment="See general comments.")
 
 	def test_124(self):
 		''' The <emotionml> element MAY contain arbitrary plain text.'''
@@ -168,7 +180,7 @@ class TestEMLAssertions(unittest.TestCase):
 		eml.content = "Test Content"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
-		print emxml
+		#print emxml
 		doc=parseString(emxml)
 		nodes=doc.getElementsByTagName('emotionml')
 
@@ -217,7 +229,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.appraisals.append(rep)
 		rep=Representation('appealingness', 'appraisal')
 		emo.appraisals.append(rep)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -233,7 +245,7 @@ class TestEMLAssertions(unittest.TestCase):
 		rep=Representation('dominating', 'action-tendency')
 		emo.action_tendencies.append(rep)
 		eml.emotions.append(emo)
-		eml.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
+		eml.action_tendency_set="http://www.example.com/emotionot-implction/frijda.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 
@@ -266,7 +278,7 @@ class TestEMLAssertions(unittest.TestCase):
 		info=Info()
 		emo.info=info
 		eml.emotions.append(emo)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		self.assertTrue(doc.getElementsByTagName('info'), printOutcome('155', 'fail', 'The <emotion> element MAY contain a single <info> element.'))
@@ -310,10 +322,13 @@ class TestEMLAssertions(unittest.TestCase):
 		'''
 		The "category-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome("160", 'N/A', 'category-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI')
+		print printOutcome("160", 'not-impl', 'category-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI',
+			comment="See general comments.")
 
 	def test_161(self): 
-		print printOutcome( '161','N/A',"SUB CONSTRAINT: The \"category-set\" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type=\"category\".")	
+		print printOutcome( '161','not-impl',
+			'SUB CONSTRAINT: The "category-set" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type="category".',
+			comment="See general comments.")	
 	
 	def test_162(self):
 		eml=EmotionML()
@@ -331,17 +346,21 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_163(self): 
 		''' The "dimension-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome('163', 'N/A', 'The "dimension-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.')
+		print printOutcome('163', 'not-impl', 
+			'The "dimension-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.")
 
 	def test_164(self): 
-		print printOutcome( '164','N/A',"SUB CONSTRAINT: The \"dimension-set\" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type=\"dimension\".")
+		print printOutcome( '164','not-impl',
+			'SUB CONSTRAINT: The "dimension-set" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type="dimension".',
+			comment="See general comments.")
 	
 	def test_165(self):
 		eml= EmotionML()
 		emo=Emotion()
 		rep=Representation('suddenness', 'appraisal')
 		emo.appraisals.append(rep)
-		emo.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		emo.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -353,10 +372,13 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_166(self): 
 		''' The "appraisal-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome("166", 'N/A', 'The "appraisal-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI')
+		print printOutcome("166", 'not-impl', 'The "appraisal-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI',
+			comment="See general comments.")
 
 	def test_167(self):
-		print printOutcome('167','N/A',"SUB CONSTRAINT: The \"appraisal-set\" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type=\"appraisal\".")
+		print printOutcome('167','not-impl',
+			'SUB CONSTRAINT: The "appraisal-set" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".',
+			comment="See general comments.")
 
 	
 	def test_168(self):
@@ -364,7 +386,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo=Emotion()
 		rep=Representation('agnostic', 'action-tendency')
 		emo.action_tendencies.append(rep)
-		emo.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
+		emo.action_tendency_set="http://www.example.com/emotionot-implction/frijda.xml"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -377,7 +399,9 @@ class TestEMLAssertions(unittest.TestCase):
 		''' 
 		The "action-tendency-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
 		'''
-		print printOutcome('169', 'N/A', '"action-tendency-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.')
+		print printOutcome('169', 'not-impl', 
+			'"action-tendency-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.")
 
 	def test_170(self): 
 		print printOutcome('170', 'pass', "SUB CONSTRAINT: The \"action-tendency-set\" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type=\"action-tendency\".")
@@ -389,7 +413,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.action_tendencies.append(rep)
 		emo.version='1.0'
 		eml.emotions.append(emo)
-		eml.action_tendency_set="http://www.example.com/emotion/action/frijda.xml"
+		eml.action_tendency_set="http://www.example.com/emotionot-implction/frijda.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions= doc.getElementsByTagName('emotion')
@@ -481,7 +505,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.appraisals.append(rep)
 		emo.end= time.time()
 		eml.emotions.append(emo)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions=doc.getElementsByTagName('emotion')
@@ -495,7 +519,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.appraisals.append(rep)
 		emo.duration= 150
 		eml.emotions.append(emo)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions=doc.getElementsByTagName('emotion')
@@ -509,7 +533,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.appraisals.append(rep)
 		emo.time_ref_uri= "#test_uri"
 		eml.emotions.append(emo)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions=doc.getElementsByTagName('emotion')
@@ -524,7 +548,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.appraisals.append(rep)
 		emo.time_ref_anchor_point= "start"
 		eml.emotions.append(emo)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions=doc.getElementsByTagName('emotion')
@@ -538,7 +562,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo.appraisals.append(rep)
 		emo.offset_to_start= "2000"
 		eml.emotions.append(emo)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
 		emotions=doc.getElementsByTagName('emotion')
@@ -616,7 +640,9 @@ class TestEMLAssertions(unittest.TestCase):
 		emxml=eml2.to_xml().toprettyxml()
 		print printOutcome("210", 'pass', 'If the <category> element is used, a category vocabulary MUST be declared using a "category-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
 		"""
-		print printOutcome("210", 'N/A', 'If the <category> element is used, a category vocabulary MUST be declared using a "category-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
+		print printOutcome("210", 'not-impl', 
+			'If the <category> element is used, a category vocabulary MUST be declared using a "category-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.',
+			comment="See general comments.")
 
 	def test_211(self):
 		eml= EmotionML()
@@ -639,7 +665,9 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("211", 'pass', 'A <category> element contains a \"name\" attribute.')
 	
 	def test_212(self): 
-		print printOutcome('211', 'N/A', "SUB CONSTRAINT: The value of the \"name\" attribute of the <category> element MUST be contained in the declared category vocabulary. If both the <emotionml> and the <emotion> element has a \"category-set\" attribute, then the <emotion> element\'s attribute defines the declared category vocabulary.")
+		print printOutcome('211', 'not-impl', 
+			"SUB CONSTRAINT: The value of the \"name\" attribute of the <category> element MUST be contained in the declared category vocabulary. If both the <emotionml> and the <emotion> element has a \"category-set\" attribute, then the <emotion> element\'s attribute defines the declared category vocabulary.",
+			comment="See general comments.")
 	
 	
 	def test_213(self):
@@ -749,7 +777,9 @@ class TestEMLAssertions(unittest.TestCase):
 		emxml=eml2.to_xml().toprettyxml()
 		print printOutcome("220", 'pass', 'If the <dimension> element is used, a dimension vocabulary MUST be declared using a "dimension-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
 		"""
-		print printOutcome("220", 'N/A', 'If the <dimension> element is used, a dimension vocabulary MUST be declared using a "dimension-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
+		print printOutcome("220", 'not-impl', 
+			'If the <dimension> element is used, a dimension vocabulary MUST be declared using a "dimension-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.',
+			comment="See general comments.")
 
 
 	def test_221(self):
@@ -774,7 +804,9 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("221", 'pass', 'A dimension element must contain a "name" attribute.')
 	
 	def test_222(self): 
-		print printOutcome('222', 'N/A', 'SUB CONSTRAINT: The value of the "name" attribute of the <dimension> element MUST be contained in the declared dimension vocabulary. If both the <emotionml> and the <emotion> element has a "dimension-set" attribute, then the <emotion> element\'s attribute defines the declared dimension vocabulary.')
+		print printOutcome('222', 'not-impl', 
+			'SUB CONSTRAINT: The value of the "name" attribute of the <dimension> element MUST be contained in the declared dimension vocabulary. If both the <emotionml> and the <emotion> element has a "dimension-set" attribute, then the <emotion> element\'s attribute defines the declared dimension vocabulary.',
+			comment="See general comments.")
 	
 
 	def test_223(self):
@@ -856,7 +888,9 @@ class TestEMLAssertions(unittest.TestCase):
 		emxml=eml2.to_xml().toprettyxml()
 		print printOutcome("230", 'pass', 'If the <appraisal> element is used, an appraisal vocabulary MUST be declared using an "appraisal-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
 		"""
-		print printOutcome("230", 'N/A', 'If the <appraisal> element is used, an appraisal vocabulary MUST be declared using an "appraisal-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
+		print printOutcome("230", 'not-impl', 
+			'If the <appraisal> element is used, an appraisal vocabulary MUST be declared using an "appraisal-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.',
+			comment="See general comments.")
 
 	def test_231(self):
 		eml= EmotionML()
@@ -880,12 +914,13 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome("231", 'pass', 'An appraisal element contains a "name" attribute.')
 	
 	def test_232(self): 
-		print printOutcome('232', 'N/A', 'SUB CONSTRAINT: The value of the "name" attribute of the <appraisal> element MUST be contained in the declared appraisal vocabulary. If both the <emotionml> and the <emotion> element has an "appraisal-set" attribute, then the <emotion> element\'s attribute defines the declared appraisal vocabulary.')
+		print printOutcome('232', 'not-impl', 
+			'SUB CONSTRAINT: The value of the "name" attribute of the <appraisal> element MUST be contained in the declared appraisal vocabulary. If both the <emotionml> and the <emotion> element has an "appraisal-set" attribute, then the <emotion> element\'s attribute defines the declared appraisal vocabulary.',
+			comment="See general comments.")
 	
 	def test_233(self):
 	 	eml=EmotionML()	
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
-		
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		try:
 			emo=Emotion()
 			rep=Representation('power', 'appraisal')
@@ -906,7 +941,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo=Emotion()
 		rep=Representation(name='power', representation='appraisal', value='.5')
 		emo.appraisals.append(rep)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -920,7 +955,7 @@ class TestEMLAssertions(unittest.TestCase):
 		trace=Trace('90.0Hz', [.6, .4, .8])
 		rep=Representation('power', 'appraisal', trace)
 		emo.appraisals.append(rep)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -947,7 +982,7 @@ class TestEMLAssertions(unittest.TestCase):
 		emo=Emotion()
 		rep=Representation(name='control',representation= 'appraisal', value= .5 , confidence= .8 )
 		emo.appraisals.append(rep)
-		eml.appraisal_set="http://www.example.com/emotion/appraisal/scherer.xml"
+		eml.appraisal_set="http://www.example.com/emotionot-implppraisal/scherer.xml"
 		eml.emotions.append(emo)
 		emxml=eml.to_xml().toprettyxml()
 		doc=parseString(emxml)
@@ -990,7 +1025,9 @@ class TestEMLAssertions(unittest.TestCase):
 		emxml=eml2.to_xml().toprettyxml()
 		print printOutcome("240", 'pass', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
 		"""
-		print printOutcome("240", 'N/A', 'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.')
+		print printOutcome("240", 'not-impl', 
+			'If the <action-tendency> element is used, an action tendency vocabulary MUST be declared using an "action-tendency-set" attribute on either the enclosing <emotion> element or the root element <emotionml>.',
+			comment="See general comments.")
 
 	def test_241(self):
 		eml= EmotionML()
@@ -1028,7 +1065,9 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		self.fail(printOutcome("242", 'fail', 'SUB CONSTRAINT: The value of the "name" attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an "action-tendency-set" attribute, then the <emotion> element\'s attribute defines the declared action tendency vocabulary.'))
 		"""
-		print printOutcome("242", 'N/A', "SUB CONSTRAINT: The value of the 'name' attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an 'action-tendency-set' attribute, then the <emotion> element's attribute defines the declared action tendency vocabulary.")
+		print printOutcome("242", 'not-impl', 
+			"SUB CONSTRAINT: The value of the 'name' attribute of the <action-tendency> element MUST be contained in the declared action tendency vocabulary. If both the <emotionml> and the <emotion> element has an 'action-tendency-set' attribute, then the <emotion> element's attribute defines the declared action tendency vocabulary.",
+			comment="See general comments.")
 	
 	def test_243(self):
 		try:
@@ -1125,14 +1164,17 @@ class TestEMLAssertions(unittest.TestCase):
 			eml.emotions.append(emo)
 			emxml=eml.to_xml().toprettyxml()
 		except ValueError:			
-			print printOutcome("301", "pass", 'The attribute "expressed-through" of the <emotion> element, if present, MUST be of type xsd:nmtokens.')
+			print printOutcome("301", "pass", 
+				'The attribute "expressed-through" of the <emotion> element, if present, MUST be of type xsd:nmtokens.')
 			return
-		self.fail( printOutcome("301", "fail", 'The attribute "expressed-through" of the <emotion> element, if present, MUST be of type xsd:nmtokens.'))
+		self.fail( printOutcome("301", "fail", 
+			'The attribute "expressed-through" of the <emotion> element, if present, MUST be of type xsd:nmtokens.'))
 	
 	def test_302(self): 
 		''' The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"
 		'''
-		print printOutcome("302", "pass", 'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"')
+		print printOutcome("302", "pass", 
+			'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"')
 
 	def test_303(self): 
 		'''The <info> element MAY contain arbitrary plain text.
@@ -1154,7 +1196,9 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_304(self): 
 		''' The <info> element MUST NOT contain any elements in the EmotionML namespace, "http://www.w3.org/2009/10/emotionml". 
 		'''
-		print printOutcome( '304','N/A', 'The <info> element MUST NOT contain any elements in the EmotionML namespace, "http://www.w3.org/2009/10/emotionml". ')
+		print printOutcome( '304','not-impl', 
+			'The <info> element MUST NOT contain any elements in the EmotionML namespace, "http://www.w3.org/2009/10/emotionml". ',
+			comment="See general comments.")
 
 	def test_305(self):
 		eml=EmotionML()
@@ -1212,10 +1256,13 @@ class TestEMLAssertions(unittest.TestCase):
 		self.fail (printOutcome("410","fail","The <reference> element doesn't contain a 'uri' attribute."))
 	
 	def test_411(self):
-		print printOutcome("411","N/A",'The "uri" attribute of <reference> MUST be of type xsd:anyURI') 
+		print printOutcome("411","not-impl",'The "uri" attribute of <reference> MUST be of type xsd:anyURI',
+			comment="See general comments.") 
 
 	def test_412(self): 
-		print printOutcome("412","N/A",'SUB CONSTRAINT: The URI in the "uri" attribute of a <reference> element MAY be extended by a media fragment.')
+		print printOutcome("412","not-impl",
+			'SUB CONSTRAINT: The URI in the "uri" attribute of a <reference> element MAY be extended by a media fragment.',
+			comment="See general comments.")
 	
 
 	def test_413(self):
@@ -1269,7 +1316,9 @@ class TestEMLAssertions(unittest.TestCase):
 		'''
 		print printOutcome('416','pass','The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string.')
 	def test_417(self): 
-		print printOutcome("417","N/A",'SUB CONSTRAINT: The value of the "media-type" attribute of the <reference> element, if present, MUST be a valid MIME type.')
+		print printOutcome("417","not-impl",
+			'SUB CONSTRAINT: The value of the "media-type" attribute of the <reference> element, if present, MUST be a valid MIME type.',
+			comment="See general comments.")
 	
 	def test_420(self): 
 		'''The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
@@ -1359,7 +1408,10 @@ class TestEMLAssertions(unittest.TestCase):
 		printOutcome("422", "pass", 'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
 	def test_423(self): 
-		print printOutcome("423","N/A",'The value of the "time-ref-uri" attribute of <emotion>, if present, MUST be of type xsd:anyURI.') 
+		print printOutcome("423","not-impl",
+			'The value of the "time-ref-uri" attribute of <emotion>, if present, MUST be of type xsd:anyURI.',
+			comment="See general comments.") 
+
 	
 
 	def test_424(self):
@@ -1748,7 +1800,7 @@ class TestEMLAssertions(unittest.TestCase):
 			return
 		self.fail(printOutcome('608', 'fail', 'An <item> MUST NOT have the same name as any other <item> within the same <vocabulary>.'))
 		'''
-		printOutcome('608', 'N/A', 'An <item> MUST NOT have the same name as any other <item> within the same <vocabulary>.')
+		printOutcome('608', 'not-impl', 'An <item> MUST NOT have the same name as any other <item> within the same <vocabulary>.',comment="Vocabulary checks were not implemented in this release. See ")
 
 
 	def test_700(self):
@@ -1764,8 +1816,8 @@ class TestEMLAssertions(unittest.TestCase):
 		printOutcome('700', 'pass', 'All EmotionML elements MUST use the EmotionML namespace, "http://www.w3.org/2009/10/emotionml". ')
 	
 
-def printOutcome( ID, result, notes ):
-	return "<assert id=\"%s\" res=\"%s\">%s</assert>" % (ID,result,notes)	
+def printOutcome( ID, result, notes,comment="" ):
+	return '<assert id=\"%s\" res=\"%s\">%s</assert>' % (ID,result,comment)	
 
 if __name__ == '__main__':
         unittest.main()

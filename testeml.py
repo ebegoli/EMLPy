@@ -382,6 +382,12 @@ class TestEmotionMLGeneration(unittest.TestCase):
    	self.assertTrue( is_float(val4), val4 + " is float" )
    	self.assertFalse( is_float(val5), val5 + " is float" )
 
+   def test_has_media_type:
+   	   self.assertTrue( has_media_type( "audio/mpeg" ) )
+   	   self.assertFalse( "audio/krk" )
+   	   self.assertFalse( "aurio/mpeg" )
+   	   self.assertTrue( "application/atom+xml" )
+
 
    def test_if_float_interval(self):
    	val1 = 0.4
