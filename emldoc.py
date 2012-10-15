@@ -645,15 +645,17 @@ def has_media_type( media_type):
    It queries the web site  http://www.iana.org/assignments/media-types/application
    and searches for atom+xml on the web page. '''
    import urllib2
-   media_parts = media_type.split('/')
+   if media_type.find('/'):
+      media_parts = media_type.split('/')
+   else:
+      raise ValueError( 'media type %s does not have a proper type-subtype structure.' % media_type )
 
    search_url="http://www.iana.org/assignments/media-types/"+media_parts[0]
    results = None
    try:
       results=urllib2.urlopen(search_url)
    except urllib2.HTTPError as he:
-      print "In has_media_type got %s for %s." % (he,search_url)
-      return False
+      raise ValueError( "In has_media_type got %s for %s." % (he,search_url) )
 
    found = False
    for l in results.readlines():
