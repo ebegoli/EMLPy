@@ -39,7 +39,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
         emotionml.dimension_set="http://someurl/dim-set"
         emotion = Emotion()
 
-        emotion.emotion_id = "test id"
+        emotion.emotion_id = "test_id"
         emotion.expressed_through = "voice"
         emotion.action_tendency_set="http://someurl/action-tendency-set"
 
@@ -50,7 +50,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
 
         info = Info("some-id")
 
-        reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="jpeg")
+        reference = Reference(uri="http://some-uri",role="triggeredBy",media_type="image/jpeg")
 
         emotion.action_tendencies.append(rep)
         emotion.info = info
@@ -74,7 +74,7 @@ class TestEmotionMLGeneration(unittest.TestCase):
         emotions = dom3.getElementsByTagName("emotion")
 
         #check that first emotion has id "test id" 
-        self.assertEqual( str(emotions[0].getAttribute("id")), "test id"  )
+        self.assertEqual( str(emotions[0].getAttribute("id")), "test_id"  )
 
         #check that info has id "some-id" 
         infos = dom3.getElementsByTagName("info")
@@ -371,6 +371,10 @@ class TestEmotionMLGeneration(unittest.TestCase):
    def test_is_uri(self):
    	uri = "http://www.google.com"
    	self.assertTrue( is_uri( uri ), uri + " is valid URI ")
+   	uri = "bhsh"
+   	self.assertFalse( is_uri( uri ), uri + " is not valid URI ")
+   	uri = "ght://bhsh"
+   	self.assertFalse( is_uri( uri ), uri + " is not valid URI ")
 
    def test_if_float(self):
    	val1 = "0.4"
@@ -382,11 +386,11 @@ class TestEmotionMLGeneration(unittest.TestCase):
    	self.assertTrue( is_float(val4), val4 + " is float" )
    	self.assertFalse( is_float(val5), val5 + " is float" )
 
-   def test_has_media_type:
+   def test_has_media_type(self):
    	   self.assertTrue( has_media_type( "audio/mpeg" ) )
-   	   self.assertFalse( "audio/krk" )
-   	   self.assertFalse( "aurio/mpeg" )
-   	   self.assertTrue( "application/atom+xml" )
+   	   self.assertFalse( has_media_type("audio/krk" ) )
+   	   self.assertRaises( ValueError, has_media_type, "aurio/mpeg" ) 
+   	   self.assertTrue( has_media_type("application/atom+xml" ) )
 
 
    def test_if_float_interval(self):
