@@ -371,10 +371,10 @@ class TestEmotionMLGeneration(unittest.TestCase):
    def test_is_uri(self):
    	uri = "http://www.google.com"
    	self.assertTrue( is_uri( uri ), uri + " is valid URI ")
-   	uri = "bhsh"
-   	self.assertFalse( is_uri( uri ), uri + " is not valid URI ")
    	uri = "ght://bhsh"
    	self.assertFalse( is_uri( uri ), uri + " is not valid URI ")
+   	uri = "#bhsh"
+   	self.assertTrue( is_uri( uri ), uri + " is valid URI ")
 
    def test_if_float(self):
    	val1 = "0.4"
@@ -386,11 +386,13 @@ class TestEmotionMLGeneration(unittest.TestCase):
    	self.assertTrue( is_float(val4), val4 + " is float" )
    	self.assertFalse( is_float(val5), val5 + " is float" )
 
-   def test_has_media_type(self):
-   	   self.assertTrue( has_media_type( "audio/mpeg" ) )
-   	   self.assertFalse( has_media_type("audio/krk" ) )
-   	   self.assertRaises( ValueError, has_media_type, "aurio/mpeg" ) 
-   	   self.assertTrue( has_media_type("application/atom+xml" ) )
+   def test_handle_repr_set(self):
+   	''' '''
+   	emotionml = Document()
+   	repset_name = 'dimension-set'
+   	repset = Representation(name='fear',representation='dimension')
+   	emotionml = handle_repr_set( repset_name, repset, emotionml )
+   	print emotionml.toprettyxml()
 
 
    def test_if_float_interval(self):
@@ -406,6 +408,12 @@ class TestEmotionMLGeneration(unittest.TestCase):
    	self.assertFalse( is_within_interval(val4), str(val4) + " is not within [0,1]" )
    	self.assertTrue( is_within_interval(val5), str(val5) + " is within [0,1]" )
    	self.assertFalse( is_within_interval(val6), str(val6) + " is not within [0,1]" )
-	
+
+   def test_has_media_type(self):
+   	self.assertTrue( has_media_type( "audio/mpeg" ) )
+   	self.assertFalse( has_media_type("audio/krk" ) )
+   	self.assertRaises( ValueError, has_media_type, "aurio/mpeg" )
+   	self.assertTrue( has_media_type("application/atom+xml" ) )
+   	
 if __name__ == '__main__':
         unittest.main()

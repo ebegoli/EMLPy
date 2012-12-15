@@ -25,6 +25,8 @@ import xml.dom.minidom
 import urllib2
 
 representations = ('dimension', 'category','appraisal', 'action-tendency')
+anyuri_regex = re.compile(r"^(([a-zA-Z][0-9a-zA-Z+\-\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+" + 
+   r"$\.\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\.\-_!~*'()%]+)?$")
 
 class EmotionML:
    """ Representation for root Emotion element in EmotionML"""
@@ -50,17 +52,23 @@ class EmotionML:
       else:
          em.setAttribute("version",self.version)
 
+      em_sets = (('category-set',self.category_set), ('dimension-set',self.dimension_set), 
+         ('appraisal-set',self.appraisal_set), ('action-tendency-set',self.action_tendency_set))
+
       if self.content:
          em_text = doc.createTextNode(str(self.content))
          em.appendChild(em_text)
-      if self.category_set:
-         em.setAttribute("category-set",self.category_set)
-      if self.dimension_set:
-         em.setAttribute("dimension-set",self.dimension_set)
-      if self.appraisal_set:
-         em.setAttribute("appraisal-set",self.appraisal_set)
-      if self.action_tendency_set:
-         em.setAttribute("action-tendency-set",self.action_tendency_set)
+       
+      def add_set(em, em_set):  
+         if em_set[1]:
+            if is_uri(em_set[1]):
+               em.setAttribute(em_set[0],em_set[1])
+            else:
+               raise ValueError( em_set[0] + " " + em_set[1] + " for EmotionML is not of type AnyURI." )
+
+      for em_set in em_sets:
+         add_set(em,em_set)         
+
       if self.info:
          em.appendChild(self.info.to_xml(doc))
       for vocabulary in self.vocabularies:
@@ -168,9 +176,6 @@ class Emotion:
       self.offset_to_start = None
       self.expressed_through = None
 
-   #TODO: consider using one append method that will resolve reference
-   # and add to appropriate list
-
    def get_undefined_sets(self):
       """ iterate through four representations and make sure
       the representation sets on emotion defined these
@@ -215,22 +220,17 @@ class Emotion:
       for vocabulary in self.vocabularies:
          emo.appendChild(vocabulary.to_xml(doc))
 
-      if self.category_set:
-         emo.setAttribute("category-set",self.category_set)
-      if self.dimension_set:
-         emo.setAttribute("dimension-set",self.dimension_set)
-      if self.appraisal_set:
-         emo.setAttribute("appraisal-set",self.appraisal_set)
-      if self.action_tendency_set:
-         emo.setAttribute("action-tendency-set",self.action_tendency_set)
+      for repset in (("dimension-set",self.dimension_set),("category-set",self.category_set),
+                     ("action-tendency-set",self.action_tendency_set),("appraisal-set",self.appraisal_set)):
+         emo = handle_repr_set( repset[0], repset[1], emo )
 
       for reference in self.references:
          emo.appendChild(reference.to_xml(doc))
 
-      for child in (self.categories,self.dimensions,self.appraisals,
-         self.action_tendencies):
-         for item in child:
+      for sets in (self.categories,self.dimensions,self.appraisals, self.action_tendencies):
+         for item in sets:
             emo.appendChild(item.to_xml(doc))
+      
       if self.emotion_id:
          if not is_ID(self.emotion_id):
             raise ValueError( "id %s on emotion is not of type xsd:id." % str(self.emotion_id) )
@@ -331,7 +331,7 @@ class Emotion:
          return False
 
 class Vocabulary:
-   """ Contains the definition of an emotion vocabulary - <vocabulary>  """
+   ''' Contains the definition of an emotion vocabulary - <vocabulary>  '''
    def __init__(self,type,id,items,info=None):
       self.type = type
       self.id = id
@@ -624,15 +624,8 @@ def is_ID( val ):
    return reg.match( val )
 
 def is_uri( something ):
-   ''' Checks if the string points to some url '''
-   regex = re.compile(
-        r'^(?:http|ftp)s?://' # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        r'localhost|' #localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-        r'(?::\d+)?' # optional port
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-   return something is not None and regex.search(something)
+   ''' Checks if the string complies with xsd:anyURI '''
+   return (something is not None) and (anyuri_regex.match(str(something)) is not None)
 
 def has_same_name( elements ):
    """ Checks if the names of the elements are same
@@ -668,3 +661,10 @@ def has_media_type( media_type):
    results.close()
    return found
 
+def handle_repr_set( repset_name, repset, emotionml ):
+   ''' Checks on the format of set (if it is anyURI) and adds it to the emotion document '''
+   if repset:
+      if not is_uri(repset.name):
+         raise ValueError('%s %s is not a valid URI' % (repset_name, repset) )
+         emo.setAttribute(repset_name,repset)
+   return emotionml
