@@ -142,11 +142,25 @@ class TestEMLAssertions(unittest.TestCase):
 		'''
 		The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
 		'''
-		#TODO: to be implemented
-		print printOutcome('116', 'pass', 
-			'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
-			comment="See general comments.")
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation('pride', 'category')
+		emo.categories.append(rep)
+		ref=Reference("http://www.example.com/data/video/v1/avi?t=2,13", 'expressedBy', 'audio/mp4')
+		emo.references.append(ref)
+		ref=Reference("http://www.example.com/events/e12.xml")
+		emo.references.append(ref)
+		eml.emotions.append(emo)
+		eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#intensity-dimension"
 
+		try:
+			eml.category_set="#$%"
+			emxml=eml.to_xml().toprettyxml()
+		except ValueError:
+			print printOutcome("116", 'pass', 'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
+			return
+		self.fail( printOutcome("116", 'fail', 'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
+			
 
 	def test_117(self): 
 		''' SUB CONSTRAINT: The "dimension-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="dimension".
