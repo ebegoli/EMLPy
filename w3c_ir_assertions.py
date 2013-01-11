@@ -108,18 +108,13 @@ class TestEMLAssertions(unittest.TestCase):
 		eml.category_set="http://www.w3.org/TR/emotion-voc/xml#everyday-categories"
 
 		try:
-			eml.category_set="#$%"
+			eml.category_set="  #$%"
 			emxml=eml.to_xml().toprettyxml()
 		except ValueError:
 			print printOutcome("113", 'pass', 'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
 			return
 		self.fail( printOutcome("113", 'fail', 'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
 			
-
-
-		print printOutcome("113", 'pass', 
-			'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
-			comment="See general comments.")
 	
 	def test_114(self):
 		''' SUB CONSTRAINT: The "category-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="category".
@@ -144,17 +139,17 @@ class TestEMLAssertions(unittest.TestCase):
 		'''
 		eml=EmotionML()
 		emo=Emotion()
-		rep=Representation('pride', 'category')
-		emo.categories.append(rep)
+		rep=Representation('pride', 'dimension') # sets the st
+		emo.dimensions.append(rep)
 		ref=Reference("http://www.example.com/data/video/v1/avi?t=2,13", 'expressedBy', 'audio/mp4')
 		emo.references.append(ref)
 		ref=Reference("http://www.example.com/events/e12.xml")
 		emo.references.append(ref)
 		eml.emotions.append(emo)
-		eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#intensity-dimension"
+		eml.dimension_set="http://www.w3.org/TR/emotion-voc/xml#intensity-dimension" #pointer to set
 
 		try:
-			eml.category_set="#$%"
+			eml.dimension_set="#$%"
 			emxml=eml.to_xml().toprettyxml()
 		except ValueError:
 			print printOutcome("116", 'pass', 'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
@@ -181,9 +176,25 @@ class TestEMLAssertions(unittest.TestCase):
 	def test_119(self): 
 		''' The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
 		'''
-		#TODO: To be implented
-		print printOutcome("119", 'pass', 'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
-			comment="See general comments.")
+		eml=EmotionML()
+		emo=Emotion()
+		rep=Representation('pride', 'appraisal') # sets the appraisal set
+		emo.appraisals.append(rep)
+		ref=Reference("http://www.example.com/data/video/v1/avi?t=2,13", 'expressedBy', 'audio/mp4')
+		emo.references.append(ref)
+		ref=Reference("http://www.example.com/events/e12.xml")
+		emo.references.append(ref)
+		eml.emotions.append(emo)
+		eml.appraisal_set="http://www.w3.org/TR/emotion-voc/xml#intensity-dimension" #pointer to set
+
+		try:
+			eml.appraisal_set="  #$%"
+			emxml=eml.to_xml().toprettyxml()
+		except ValueError:
+			print printOutcome("119", 'pass', 'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.')
+			return
+		self.fail( printOutcome("119", 'fail', 'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.'))
+
 
 	def test_120(self): 
 	    #TODO: To be implemented 
@@ -387,6 +398,7 @@ class TestEMLAssertions(unittest.TestCase):
 		print printOutcome('162', 'pass', 'The <emotionml> element MAY contain an attribute "dimension-set".')
 
 	def test_163(self): 
+		#TODO
 		''' The "dimension-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
 		'''
 		print printOutcome('163', 'pass', 
