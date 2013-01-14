@@ -59,15 +59,8 @@ class EmotionML:
          em_text = doc.createTextNode(str(self.content))
          em.appendChild(em_text)
        
-      def add_set(em, em_set):  
-         if em_set[1]:
-            if is_uri(em_set[1]):
-               em.setAttribute(em_set[0],em_set[1])
-            else:
-               raise ValueError( em_set[0] + " " + em_set[1] + " for EmotionML is not of type AnyURI." )
-
       for em_set in em_sets:
-         add_set(em,em_set)         
+         em = handle_repr_set(em_set, em)
 
       if self.info:
          em.appendChild(self.info.to_xml(doc))
@@ -222,7 +215,7 @@ class Emotion:
 
       for repset in (("dimension-set",self.dimension_set),("category-set",self.category_set),
                      ("action-tendency-set",self.action_tendency_set),("appraisal-set",self.appraisal_set)):
-         emo = handle_repr_set( repset[0], repset[1], emo )
+         emo = store_repr_set( repset, emo )
 
       for reference in self.references:
          emo.appendChild(reference.to_xml(doc))
@@ -432,7 +425,7 @@ class Representation:
       assert representation in representations, 'name of representation:%s is not in\
        the list of representations' % str(representations)
       self.representation = representation
-      self.name = name
+      self.name = name # user specified name for tbis representation
       self.trace = trace
       self.value = value
       self.confidence = confidence 
@@ -661,10 +654,12 @@ def has_media_type( media_type):
    results.close()
    return found
 
-def handle_repr_set( repset_name, repset, emotionml ):
+#TODO: stopped here. I need review this naming convention and maybe do a string replace
+# in place to replace _ in set name with - or call set_name() function on it 
+def store_repr_set( repset, doc ):
    ''' Checks on the format of set (if it is anyURI) and adds it to the emotion document '''
    if repset:
-      if not is_uri(repset.name):
-         raise ValueError('%s %s is not a valid URI' % (repset_name, repset) )
-         emo.setAttribute(repset_name,repset)
-   return emotionml
+      if not is_uri(repset[1].name):
+         raise ValueError('%s %s is not a valid URI' % (repset.name, repset[0]) )
+      doc.setAttribute(repset.name,repset[1])
+   return doc
