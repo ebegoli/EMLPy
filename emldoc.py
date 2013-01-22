@@ -23,8 +23,10 @@ import re
 import xml.dom.minidom
 
 representations = ('dimension', 'category', 'appraisal', 'action-tendency')
-anyuri_regex = re.compile(r"^(([a-zA-Z][0-9a-zA-Z+\-\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+" +
-                          r"$\.\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\.\-_!~*'()%]+)?$")
+
+# Only checks for multiple # and ; followed by non-hex per:
+# http://www.schemacentral.com/sc/xsd/t-xsd_anyURI.html
+anyuri_regex = re.compile(r"(%[^0-9A-Fa-f]+)|(#(.*#)+)")
 
 
 class EmotionML:
@@ -327,7 +329,7 @@ class Emotion:
 
 
 class Vocabulary:
-    ''' Contains the definition of an emotion vocabulary - <vocabulary>  '''
+    """ Contains the definition of an emotion vocabulary - <vocabulary>  """
 
     def __init__(self, type, id, items, info=None):
         self.type = type
@@ -424,8 +426,8 @@ class Representation:
         """
 
     def __init__(self, name, representation, trace=None, value=None, confidence=None):
-        '''name is a given name for this representation and representation has to be
-        one of 'dimension', 'category', 'appraisal', 'action-tendency' '''
+        """name is a given name for this representation and representation has to be
+        one of 'dimension', 'category', 'appraisal', 'action-tendency' """
         assert representation, 'name of representation is empty'
         assert representation in representations, 'name of representation:%s is not in\
        the list of representations' % str(representations)
@@ -561,7 +563,11 @@ class Reference:
     def to_xml(self, doc):
         """ Produces a <reference> element """
         ref = doc.createElement('reference')
-        ref.setAttribute('uri', str(self.uri))
+        if self.uri:
+            if not is_uri( self.uri ):
+                raise ValueError("uri %s on reference is not valid AnyURI value." % self.uri)
+            else:
+                ref.setAttribute('uri', str(self.uri))
         if self.media_type:
             if not has_media_type(self.media_type):
                 raise TypeError("media type (" + self.media_type + ") is not recognized.")
@@ -635,8 +641,8 @@ def is_ID( val ):
 
 
 def is_uri( something ):
-    ''' Checks if the string complies with xsd:anyURI '''
-    return (something is not None) and (anyuri_regex.match(str(something)) is not None)
+    """ Checks if the string complies with xsd:anyURI """
+    return (something is not None) and (anyuri_regex.search(str(something)) is None)
 
 
 def has_same_name( elements ):
@@ -647,9 +653,9 @@ def has_same_name( elements ):
 
 
 def has_media_type( media_type):
-    ''' Checks media type such as 'application/atom+xml' against iana.org.
+    """ Checks media type such as 'application/atom+xml' against iana.org.
     It queries the web site  http://www.iana.org/assignments/media-types/application
-    and searches for atom+xml on the web page. '''
+    and searches for atom+xml on the web page. """
     import urllib2
 
     if media_type.find('/'):
