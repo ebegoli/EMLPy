@@ -249,7 +249,10 @@ class Emotion:
                 raise ValueError("duration %s is not a positive integer." %
                                  str(self.duration))
             emo.setAttribute('duration', str(self.duration))
+
         if self.time_ref_uri:
+            if not is_uri(self.time_ref_uri):
+                raise ValueError("time_ref_uri %s is not a valid uri." % str(self.time_ref_uri))
             emo.setAttribute('time-ref-uri', str(self.time_ref_uri))
 
         if self.time_ref_anchor_point:
