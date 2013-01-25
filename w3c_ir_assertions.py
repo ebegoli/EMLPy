@@ -104,9 +104,7 @@ class TestEMLAssertions(unittest.TestCase):
         print printOutcome("112", 'pass', 'The <emotionml> element  MAY contain an attribute "category-set".')
 
     def test_113(self):
-        """
-		The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
-		"""
+        """ The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI. """
         eml = EmotionML()
         emo = Emotion()
         rep = Representation('pride', 'category')
@@ -190,8 +188,7 @@ class TestEMLAssertions(unittest.TestCase):
         print printOutcome("118", 'pass', 'The <emotionml> element  MAY contain an attribute "appraisal-set".')
 
     def test_119(self):
-        """ The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
-		"""
+        """ The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI. """
         eml = EmotionML()
         emo = Emotion()
         rep = Representation('pride', 'appraisal') # sets the appraisal set
@@ -225,19 +222,38 @@ class TestEMLAssertions(unittest.TestCase):
         eml.action_tendency_set = "http://www.example.com/emotionot-implction/frijda.xml"
         emxml = eml.to_xml().toprettyxml()
         doc = parseString(emxml)
-        self.assertTrue(doc.documentElement.getAttribute('action-tendency-set'), printOutcome('121', 'fail',
-                                                                                              'The <emotionml> element cannot contain an attribute "action-tendency-set".'))
+        self.assertTrue(doc.documentElement.getAttribute('action-tendency-set'),
+                        printOutcome('121', 'fail',
+                                     'The <emotionml> element cannot contain an attribute "action-tendency-set".'))
         print printOutcome('121', 'pass', 'The <emotionml> element MAY contain an attribute "action-tendency-set".')
 
 
     def test_122(self):
-        """
-		The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.
-		"""
-        #TODO implement anyURI handling
-        print printOutcome('122', 'pass',
-                           'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.',
-                           comment="See general comments.")
+        """ The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI. """
+        eml = EmotionML()
+        emo = Emotion()
+        rep = Representation('pride', 'action-tendency') # sets the representation type
+        emo.action_tendencies.append(rep)
+        eml.emotions.append(emo)
+        #TODO: use correct set instead dimension here below
+        eml.action_tendency_set = "http://www.w3.org/TR/emotion-voc/xml#intensity-dimension"
+
+        try:
+            eml.action_tendency_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except ValueError as e:
+            print e
+            self.fail(printOutcome("122", 'fail',
+                                   'The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
+        try:
+            eml.action_tendency_set = "#link#"
+            emxml = eml.to_xml().toprettyxml()
+        except ValueError:
+            print printOutcome("122", 'pass',
+                               'The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
+            return
+        self.fail(printOutcome("122", 'fail',
+                               'The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
 
     def test_123(self):
         print printOutcome('123', 'pass',
@@ -338,7 +354,8 @@ class TestEMLAssertions(unittest.TestCase):
         emo = Emotion()
         rep = Representation('pride', 'category')
         emo.categories.append(rep)
-        ref = Reference(uri="http://www.example.com/data/video/v1/avi?t=2,13",role='expressedBy', media_type='audio/mp4')
+        ref = Reference(uri="http://www.example.com/data/video/v1/avi?t=2,13", role='expressedBy',
+                        media_type='audio/mp4')
         emo.references.append(ref)
         ref = Reference(uri="http://www.example.com/events/e12.xml")
         emo.references.append(ref)
@@ -403,13 +420,24 @@ class TestEMLAssertions(unittest.TestCase):
 
 
     def test_160(self):
-        """
-		The "category-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
-		"""
-        #TODO: implement anyURI handling
-        print printOutcome("160", 'pass',
-                           'category-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI',
-                           comment="See general comments.")
+        """ The "category-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI. """
+        emo = Emotion()
+        rep = Representation('pride', 'category') # sets the set
+        emo.categories.append(rep)
+
+        emo.dimension_set = "#link"
+        emxml = emo.to_xml(Document()).toprettyxml()
+
+        try:
+            emo.dimension_set = "link%Z"
+            emxml = emo.to_xml(Document()).toprettyxml()
+        except ValueError:
+            print printOutcome("160", 'pass',
+                               'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
+            return
+        self.fail(printOutcome("160", 'fail',
+                               'The "category-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
+
 
     def test_161(self):
         print printOutcome('161', 'pass',
@@ -417,6 +445,7 @@ class TestEMLAssertions(unittest.TestCase):
                            comment="See general comments.")
 
     def test_162(self):
+        """The <emotionml> element MAY contain an attribute "dimension-set" """
         eml = EmotionML()
         emo = Emotion()
         rep = Representation(name="arousal", representation='dimension', value='.5')
@@ -436,10 +465,6 @@ class TestEMLAssertions(unittest.TestCase):
         emo = Emotion()
         rep = Representation('pride', 'dimension') # sets the st
         emo.dimensions.append(rep)
-        ref = Reference("http://www.example.com/data/video/v1/avi?t=2,13", 'expressedBy', 'audio/mp4')
-        emo.references.append(ref)
-        ref = Reference("http://www.example.com/events/e12.xml")
-        emo.references.append(ref)
         eml.emotions.append(emo)
         eml.dimension_set = "http://www.w3.org/TR/emotion-voc/xml#intensity-dimension"
 
@@ -449,13 +474,13 @@ class TestEMLAssertions(unittest.TestCase):
         except ValueError as e:
             print e
             self.fail(printOutcome("163", 'fail',
-                                   'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
+                                   'The "dimension-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI'))
         try:
             eml.dimension_set = "#link#"
             emxml = eml.to_xml().toprettyxml()
         except ValueError:
             print printOutcome("163", 'pass',
-                               'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
+                               'The "dimension-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI')
             return
         self.fail(printOutcome("163", 'fail',
                                'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
@@ -467,6 +492,7 @@ class TestEMLAssertions(unittest.TestCase):
                            comment="See general comments.")
 
     def test_165(self):
+        """ The <emotionml> element  MAY contain an attribute "appraisal-set". """
         eml = EmotionML()
         emo = Emotion()
         rep = Representation('suddenness', 'appraisal')
@@ -482,12 +508,23 @@ class TestEMLAssertions(unittest.TestCase):
 
 
     def test_166(self):
-        """ The "appraisal-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.
-		"""
-        #TODO - implement this anyURI
-        print printOutcome("166", 'pass',
-                           'The "appraisal-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI',
-                           comment="See general comments.")
+        """ The "appraisal-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI. """
+        emo = Emotion()
+        rep = Representation('pride', 'appraisal') # sets the set
+        emo.appraisals.append(rep)
+
+        emo.appraisal_set_set = "#link"
+        emxml = emo.to_xml(Document()).toprettyxml()
+
+        try:
+            emo.appraisal_set = "link%Z"
+            emxml = emo.to_xml(Document()).toprettyxml()
+        except ValueError:
+            print printOutcome("166", 'pass',
+                               'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI')
+            return
+        self.fail(printOutcome("166", 'fail',
+                               'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
 
     def test_167(self):
         print printOutcome('167', 'pass',
@@ -536,7 +573,7 @@ class TestEMLAssertions(unittest.TestCase):
 
     def test_170(self):
         """ """
-        #TODO: Implement this
+        #TODO: Implement this sub-constraint check
         print printOutcome('170', 'pass',
                            "SUB CONSTRAINT: The \"action-tendency-set\" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type=\"action-tendency\".")
 
@@ -1381,7 +1418,7 @@ class TestEMLAssertions(unittest.TestCase):
     def test_304(self):
         """ The <info> element MUST NOT contain any elements in the EmotionML namespace, "http://www.w3.org/2009/10/emotionml".
 		"""
-        #TODO: To be implemented
+        #TODO:Review and see what this means
         print printOutcome('304', 'pass',
                            'The <info> element MUST NOT contain any elements in the EmotionML namespace\ '
                            '"http://www.w3.org/2009/10/emotionml". ', comment="See general comments.")
@@ -1449,7 +1486,6 @@ class TestEMLAssertions(unittest.TestCase):
 
     def test_411(self):
         """ Checks The "uri" attribute of <reference> MUST be of type xsd:anyURI """
-
         ref = Reference(uri="#link")
         try:
             ref.to_xml(Document())
@@ -1530,7 +1566,7 @@ class TestEMLAssertions(unittest.TestCase):
 
     def test_417(self):
         """SUB CONSTRAINT: The value of the "media-type" attribute of the <reference> element if present, MUST be a valid MIME type."""
-        ref = Reference(uri="#link",media_type="image/jpeg")
+        ref = Reference(uri="#link", media_type="image/jpeg")
         try:
             ref.to_xml(Document())
         except ValueError as e:
@@ -1549,77 +1585,77 @@ class TestEMLAssertions(unittest.TestCase):
                                'SUB CONSTRAINT: The value of the "media-type" attribute of the <reference> element, if present, MUST be a valid MIME type.', ))
 
 
-def test_420(self):
-    """The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
-    """
-    invalid_val = ["z", "0.0003", "54x", "-3", "-0.5"]
-    for inv in invalid_val:
+    def test_420(self):
+        """The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
+        """
+        invalid_val = ["z", "0.0003", "54x", "-3", "-0.5"]
+        for inv in invalid_val:
+            try:
+                eml = EmotionML()
+                emo = Emotion()
+                rep = Representation(name='bored', representation='category', value=0.5)
+                emo.categories.append(rep)
+                emo.start = inv
+                eml.emotions.append(emo)
+                emxml = eml.to_xml().toprettyxml()
+            except ValueError:
+                pass
+            else:
+                self.fail(printOutcome("420", "fail",
+                                       'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
         try:
             eml = EmotionML()
             emo = Emotion()
             rep = Representation(name='bored', representation='category', value=0.5)
             emo.categories.append(rep)
-            emo.start = inv
+            emo.start = 236
             eml.emotions.append(emo)
             emxml = eml.to_xml().toprettyxml()
-        except ValueError:
-            pass
-        else:
+        except ValueError as ve:
             self.fail(printOutcome("420", "fail",
-                                   'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
-    try:
-        eml = EmotionML()
-        emo = Emotion()
-        rep = Representation(name='bored', representation='category', value=0.5)
-        emo.categories.append(rep)
-        emo.start = 236
-        eml.emotions.append(emo)
-        emxml = eml.to_xml().toprettyxml()
-    except ValueError as ve:
-        self.fail(printOutcome("420", "fail",
-                               'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
-    printOutcome("420", "pass",
-                 'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
+                                   'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.',""))
+        printOutcome("420", "pass",
+                     'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
 
-def test_421(self):
-    """ The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
-    """
-    invalid_val = ["z", "0.0003", "54x", "-3", "-0.5"]
-    for inv in invalid_val:
+    def test_421(self):
+        """ The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
+        """
+        invalid_val = ["z", "0.0003", "54x", "-3", "-0.5"]
+        for inv in invalid_val:
+            try:
+                eml = EmotionML()
+                emo = Emotion()
+                rep = Representation(name='bored', representation='category', value=0.5)
+                emo.categories.append(rep)
+                emo.end = inv
+                eml.emotions.append(emo)
+                emxml = eml.to_xml().toprettyxml()
+            except ValueError:
+                pass
+            else:
+                self.fail(printOutcome("421", "fail",
+                                       'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
         try:
             eml = EmotionML()
             emo = Emotion()
             rep = Representation(name='bored', representation='category', value=0.5)
             emo.categories.append(rep)
-            emo.end = inv
+            emo.end = 236
             eml.emotions.append(emo)
             emxml = eml.to_xml().toprettyxml()
-        except ValueError:
-            pass
-        else:
+        except ValueError as ve:
             self.fail(printOutcome("421", "fail",
                                    'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
-    try:
-        eml = EmotionML()
-        emo = Emotion()
-        rep = Representation(name='bored', representation='category', value=0.5)
-        emo.categories.append(rep)
-        emo.end = 236
-        eml.emotions.append(emo)
-        emxml = eml.to_xml().toprettyxml()
-    except ValueError as ve:
-        self.fail(printOutcome("421", "fail",
-                               'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
-    printOutcome("421", "pass",
+        printOutcome("421", "pass",
                  'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
 
-def test_422(self):
-    """ The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
-    """
-    invalid_val = ["z", "0.0003", "54x", "-3", "-0.5"]
-    for inv in invalid_val:
+    def test_422(self):
+        """ The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.
+        """
+        invalid_val = ["z", "0.0003", "54x", "-3", "-0.5"]
+        for inv in invalid_val:
             try:
                 eml = EmotionML()
                 emo = Emotion()
@@ -1631,7 +1667,8 @@ def test_422(self):
             except ValueError:
                 pass
             else:
-                self.fail(printOutcome("422", "fail", 'The value of "duration" attribute of <emotion>, if present, MUST be of typexsd:nonNegativeInteger.',))
+                self.fail(printOutcome("422", "fail",
+                                       'The value of "duration" attribute of <emotion>, if present, MUST be of typexsd:nonNegativeInteger.',"" ))
             try:
                 eml = EmotionML()
                 emo = Emotion()
@@ -1642,16 +1679,27 @@ def test_422(self):
                 emxml = eml.to_xml().toprettyxml()
             except ValueError as ve:
                 self.fail(printOutcome("422", "fail",
-                                   'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
+                                       'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
             print printOutcome("422", "pass",
                            'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
     def test_423(self):
-    #TODO: anyURI test to be implemented
-        print printOutcome("423", "pass",
-                           'The value of the "time-ref-uri" attribute of <emotion>, if present MUST be of \ '
-                           'type xsd:anyURI.', comment="See general comments.")
-
+        """The value of the "time-ref-uri" attribute of <emotion>, if present MUST be of
+                           type xsd:anyURI."""
+        emo = Emotion()
+        emo.time_ref_uri = "#link"
+        rep = Representation(name='power', representation='appraisal', value='.5')
+        emo.appraisals.append(rep)
+        emxml = emo.to_xml(Document()).toprettyxml()
+        try:
+            emo.time_ref_uri = "#link#"
+            emxml = emo.to_xml(Document()).toprettyxml()
+        except ValueError:
+            print printOutcome("423", 'pass',
+                               "The value of the \"time-ref-uri\" attribute of <emotion>, if present MUST be of  type xsd:anyURI.", "")
+            return
+        self.fail(printOutcome("423", 'fail',
+                               "The value of the \"time-ref-uri\" attribute of <emotion>, if present MUST be of type xsd:anyURI.", ""))
 
     def test_424(self):
         """ print printOutcome('424', 'pass','The value of the "time-ref-anchor-point" attribute of <emotion> is either "start" or "end".
