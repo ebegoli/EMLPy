@@ -28,7 +28,8 @@ representations = ('dimension', 'category', 'appraisal', 'action-tendency')
 # http://www.schemacentral.com/sc/xsd/t-xsd_anyURI.html
 anyuri_regex = re.compile(r"(%[^0-9A-Fa-f]+)|(#(.*#)+)")
 
-emotion_ns_regex = re.compile( r"<emotion(.)*(/)?>|<emotionml(.)*(/)?>|<reference(.)*(/)?>|<trace(.)*(/)?>|<vocabulary(.)*(/)?>|<dimension(.)*(/)?>|<category(.)*(/)?>|<appraisal(.)*(/)?>|<action-tendency(.)*(/)?>|<info(.)*(/)?>" )
+emotion_ns_regex = re.compile(
+    r"<emotion(.)*(/)?>|<emotionml(.)*(/)?>|<reference(.)*(/)?>|<trace(.)*(/)?>|<vocabulary(.)*(/)?>|<dimension(.)*(/)?>|<category(.)*(/)?>|<appraisal(.)*(/)?>|<action-tendency(.)*(/)?>|<info(.)*(/)?>")
 
 
 class EmotionML:
@@ -55,8 +56,10 @@ class EmotionML:
         else:
             em.setAttribute("version", self.version)
 
-        em_sets = (('category-set', self.category_set), ('dimension-set', self.dimension_set),
-                   ('appraisal-set', self.appraisal_set), ('action-tendency-set', self.action_tendency_set))
+        em_sets = [ems for ems in (('category-set', self.category_set), ('dimension-set', self.dimension_set),
+                                   ('appraisal-set', self.appraisal_set),
+                                   ('action-tendency-set', self.action_tendency_set)) if
+                   ems[1] is not None]
 
         for em_set in em_sets:
             em = store_repr_set(em_set, em)
@@ -69,6 +72,11 @@ class EmotionML:
             em.appendChild(self.info.to_xml(doc))
         for vocabulary in self.vocabularies:
             em.appendChild(vocabulary.to_xml(doc))
+
+        for em_set in em_sets:
+            if em_set[1] not in [voc.id for voc in self.vocabularies if (voc.type + "-set" ) == em_set[0]]:
+                raise TypeError("Set %s does not point to any defined emotionml vocabulary " % em_set[1])
+
         for emotion in self.emotions:
             # see if there are any undefined sets and if so, if defined at this level
             #undef_sets = emotion.get_undefined_sets()
@@ -500,7 +508,8 @@ class Info:
             info.setAttribute('id', self.id)
         if self.content and len(str(self.content).strip()) > 0:
             if has_emotion_namespace_elements(self.content):
-                raise ValueError('<info> element cannot containy elements from emotionml namespace %s' % str(self.content))
+                raise ValueError(
+                    '<info> element cannot containy elements from emotionml namespace %s' % str(self.content))
             info_text = doc.createTextNode(str(self.content))
             info.appendChild(info_text)
         return info
@@ -549,9 +558,6 @@ class Trace:
         return trace
 
 
-
-
-
 class Reference:
     """Representation for the <reference> - attributes: uri required
     and optional: role and media-type. Role must be one of:
@@ -574,7 +580,7 @@ class Reference:
         """ Produces a <reference> element """
         ref = doc.createElement('reference')
         if self.uri:
-            if not is_uri( self.uri ):
+            if not is_uri(self.uri):
                 raise ValueError("uri %s on reference is not valid AnyURI value." % self.uri)
             else:
                 ref.setAttribute('uri', str(self.uri))
@@ -647,19 +653,23 @@ def find(f, seq):
         if f(item):
             return item
 
+
 def has_emotion_namespace_elements(something):
     """ Checks that string does not contain any elements from emotionml namespace
     """
     return emotion_ns_regex.search(something) is not None
+
 
 def is_ID( val ):
     """ Checks if the value is valid xsd:id """
     reg = re.compile(r'^[a-zA-Z_][\w.-]*$')
     return reg.match(val)
 
+
 def is_uri( something ):
     """ Checks if the string complies with xsd:anyURI """
     return (something is not None) and (anyuri_regex.search(str(something)) is None)
+
 
 def is_xsd_string(something):
     """ Checks if the value is proper string. Currently this is any value """

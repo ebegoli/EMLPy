@@ -135,6 +135,28 @@ class TestEMLAssertions(unittest.TestCase):
                            'The "category-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="category"',
                            comment="See general comments.")
 
+        eml = EmotionML()
+        emo = Emotion()
+        rep = Representation('pride', 'appraisal') # sets the appraisal set
+        emo.appraisals.append(rep)
+        ref = Reference("http://www.example.com/data/video/v1/avi?t=2,13", 'expressedBy', 'audio/mp4')
+        emo.references.append(ref)
+        ref = Reference("http://www.example.com/events/e12.xml")
+        emo.references.append(ref)
+        eml.emotions.append(emo)
+
+        eml.appraisal_set = "http://www.w3.org/TR/emotion-voc/xml#intensity-dimension" #pointer to set
+        try:
+            eml.appraisal_set = "#link#"
+            emxml = eml.to_xml().toprettyxml()
+        except ValueError:
+            print printOutcome("119", 'pass',
+                               'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.')
+            return
+        self.fail(printOutcome("119", 'fail',
+                               'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI.'))
+
+
     def test_115(self):
         eml = EmotionML()
         eml.dimension_set = "http://www.w3.org/TR/emotion-voc/xml#pad-dimensions"
@@ -173,7 +195,6 @@ class TestEMLAssertions(unittest.TestCase):
 
     def test_117(self):
         """ SUB CONSTRAINT: The "dimension-set" attribute of <emotionml>, if present MUST refer to the ID of a <vocabulary> element with type=\"dimension\". """
-        #TODO: to be implemented
         print printOutcome('117', 'pass',
                            'SUB CONSTRAINT: The "dimension-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="dimension".',
                            comment="See general comments.")
@@ -211,10 +232,24 @@ class TestEMLAssertions(unittest.TestCase):
 
 
     def test_120(self):
-    #TODO: To be implemented 
+        """ SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, \
+        if present, MUST refer to the ID of a <vocabulary> element with type="appraisal". """
+        eml = EmotionML()
+        eml.appraisal_set = "appr"
+        eml.vocabularies.append(Vocabulary('appraisal', 'appr', [Item("name")]))
+        try:
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            print e
+            self.fail(printOutcome('120', 'pass',
+                                   'SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".', ))
+        try:
+            eml.appraisal_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            pass
         print printOutcome('120', 'pass',
-                           'SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".',
-                           comment="See general comments.")
+                           'SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".', )
 
 
     def test_121(self):
@@ -235,7 +270,6 @@ class TestEMLAssertions(unittest.TestCase):
         rep = Representation('pride', 'action-tendency') # sets the representation type
         emo.action_tendencies.append(rep)
         eml.emotions.append(emo)
-        #TODO: use correct set instead dimension here below
         eml.action_tendency_set = "http://www.w3.org/TR/emotion-voc/xml#intensity-dimension"
 
         try:
@@ -256,9 +290,24 @@ class TestEMLAssertions(unittest.TestCase):
                                'The "action-tendency-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
 
     def test_123(self):
+        """ SUB CONSTRAINT: The "action-tendency-set" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".
+        """
+        eml = EmotionML()
+        eml.action_tendency_set = "at"
+        eml.vocabularies.append(Vocabulary('action-tendency', 'at', [Item("name")]))
+        try:
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            print e
+            self.fail(printOutcome('123', 'pass',
+                                   'SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".', ))
+        try:
+            eml.action_tendency_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            pass
         print printOutcome('123', 'pass',
-                           'SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".',
-                           comment="See general comments.")
+                           'SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".', )
 
     def test_124(self):
         """ The <emotionml> element MAY contain arbitrary plain text."""
@@ -440,9 +489,25 @@ class TestEMLAssertions(unittest.TestCase):
 
 
     def test_161(self):
+        """ SUB CONSTRAINT: The "category-set" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type="category".
+        """
+        eml = EmotionML()
+        eml.category_set = "cat"
+        eml.vocabularies.append(Vocabulary('category', 'cat', [Item("name")]))
+        try:
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            print e
+            self.fail(printOutcome('161', 'pass',
+                                   'SUB CONSTRAINT: The "category-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="category".', ))
+        try:
+            eml.category_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            pass
         print printOutcome('161', 'pass',
-                           'SUB CONSTRAINT: The "category-set" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type="category".',
-                           comment="See general comments.")
+                           'SUB CONSTRAINT: The "category-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="category".', )
+
 
     def test_162(self):
         """The <emotionml> element MAY contain an attribute "dimension-set" """
@@ -486,10 +551,25 @@ class TestEMLAssertions(unittest.TestCase):
                                'The "dimension-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
 
     def test_164(self):
+        """ SUB CONSTRAINT: The "dimension-set" attribute of <emotion>, if present, MUST \
+                           refer to the ID of a <vocabulary> element with type="dimension". """
+        eml = EmotionML()
+        eml.dimension_set = "dim"
+        eml.vocabularies.append(Vocabulary('dimension', 'dim', [Item("name")]))
+        try:
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            print e
+            self.fail(printOutcome('164', 'pass',
+                                   'SUB CONSTRAINT: The "dimension-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="dimension".', ))
+        try:
+            eml.dimension_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            pass
         print printOutcome('164', 'pass',
-                           """SUB CONSTRAINT: The "dimension-set" attribute of <emotion>, if present, MUST \
-                           refer to the ID of a <vocabulary> element with type="dimension".""",
-                           comment="See general comments.")
+                           'SUB CONSTRAINT: The "dimension-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="dimension".', )
+
 
     def test_165(self):
         """ The <emotionml> element  MAY contain an attribute "appraisal-set". """
@@ -527,11 +607,24 @@ class TestEMLAssertions(unittest.TestCase):
                                'The "appraisal-set" attribute of <emotionml>, if present, MUST be of type xsd:anyURI'))
 
     def test_167(self):
+        """SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".
+        """
+        eml = EmotionML()
+        eml.appraisal_set = "app"
+        eml.vocabularies.append(Vocabulary('appraisal', 'app', [Item("name")]))
+        try:
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            print e
+            self.fail(printOutcome('167', 'pass',
+                                   'SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".', ))
+        try:
+            eml.appraisal_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            pass
         print printOutcome('167', 'pass',
-                           'SUB CONSTRAINT: The "appraisal-set" attribute of <emotion>,\
-                            if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".',
-                           comment="See general comments.")
-
+                           'SUB CONSTRAINT: The "appraisal-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="appraisal".', )
 
     def test_168(self):
         eml = EmotionML()
@@ -572,10 +665,25 @@ class TestEMLAssertions(unittest.TestCase):
                                '"action-tendency-set" attribute of <emotion>, if present, MUST be of type xsd:anyURI.'))
 
     def test_170(self):
-        """ """
-        #TODO: Implement this sub-constraint check
+        """ SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present,
+        MUST refer to the ID of a <vocabulary> element with type="action-tendency". """
+        eml = EmotionML()
+        eml.action_tendency_set_set = "act"
+        eml.vocabularies.append(Vocabulary('action-tendency', 'act', [Item("name")]))
+        try:
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            print e
+            self.fail(printOutcome('170', 'pass',
+                                   'SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".', ))
+        try:
+            eml.appraisal_set = "#link"
+            emxml = eml.to_xml().toprettyxml()
+        except TypeError as e:
+            pass
         print printOutcome('170', 'pass',
-                           "SUB CONSTRAINT: The \"action-tendency-set\" attribute of <emotion>, if present, MUST refer to the ID of a <vocabulary> element with type=\"action-tendency\".")
+                           'SUB CONSTRAINT: The "action-tendency-set" attribute of <emotionml>, if present, MUST refer to the ID of a <vocabulary> element with type="action-tendency".', )
+
 
     def test_171(self):
         eml = EmotionML()
