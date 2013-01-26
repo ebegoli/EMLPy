@@ -1395,20 +1395,17 @@ class TestEMLAssertions(unittest.TestCase):
     def test_302(self):
         """ The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"
 		"""
-
         info = Info('something')
-
-        for content in ('<emotion>','<emotionml>','<reference/>','<dimension test="1">','<appraisal test="2"/>'):
+        for content in ( '<classifiers:classifier classifiers:name="GMM"/>',
+                         '<sensors:sensor id="camera1" confidence="0.9" expressed-through="posture"/>'):
             info.content = "<something>" + content + "<something/> blah, blah"
             try:
                 info.to_xml(Document()).toprettyxml()
             except ValueError:
-                pass
-            else:
-                self.fail( printOutcome("302", "fail",
-                              'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"') )
+                self.fail(printOutcome("302", "fail",
+                                       'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"'))
         print printOutcome("302", "pass",
-                                   'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"')
+                           'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"')
 
 
     def test_303(self):
@@ -1431,7 +1428,17 @@ class TestEMLAssertions(unittest.TestCase):
     def test_304(self):
         """ The <info> element MUST NOT contain any elements in the EmotionML namespace, "http://www.w3.org/2009/10/emotionml".
 		"""
-        #TODO:Review and see what this means
+        info = Info('something')
+        for content in ('<emotion>', '<emotionml>', '<reference/>', '<dimension test="1">', '<appraisal test="2"/>'):
+            info.content = "<something>" + content + "<something/> blah, blah"
+            try:
+                info.to_xml(Document()).toprettyxml()
+            except ValueError:
+                pass
+            else:
+                self.fail(printOutcome("304", "fail",
+                                       'The <info> element MUST NOT contain any elements in the EmotionML namespace\ '
+                                       '"http://www.w3.org/2009/10/emotionml". '))
         print printOutcome('304', 'pass',
                            'The <info> element MUST NOT contain any elements in the EmotionML namespace\ '
                            '"http://www.w3.org/2009/10/emotionml". ', comment="See general comments.")
@@ -1579,7 +1586,7 @@ class TestEMLAssertions(unittest.TestCase):
         except ValueError as e:
             print e
             self.fail(printOutcome("416", "fail",
-                                   'The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string',))
+                                   'The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string', ))
 
         print printOutcome('416', 'pass',
                            'The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string')
@@ -1633,7 +1640,8 @@ class TestEMLAssertions(unittest.TestCase):
             emxml = eml.to_xml().toprettyxml()
         except ValueError as ve:
             self.fail(printOutcome("420", "fail",
-                                   'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.',""))
+                                   'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.',
+                                   ""))
         printOutcome("420", "pass",
                      'The value of the "start" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
@@ -1668,7 +1676,7 @@ class TestEMLAssertions(unittest.TestCase):
             self.fail(printOutcome("421", "fail",
                                    'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
         printOutcome("421", "pass",
-                 'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
+                     'The value of the "end" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
 
     def test_422(self):
@@ -1688,7 +1696,8 @@ class TestEMLAssertions(unittest.TestCase):
                 pass
             else:
                 self.fail(printOutcome("422", "fail",
-                                       'The value of "duration" attribute of <emotion>, if present, MUST be of typexsd:nonNegativeInteger.',"" ))
+                                       'The value of "duration" attribute of <emotion>, if present, MUST be of typexsd:nonNegativeInteger.',
+                                       ""))
             try:
                 eml = EmotionML()
                 emo = Emotion()
@@ -1701,7 +1710,7 @@ class TestEMLAssertions(unittest.TestCase):
                 self.fail(printOutcome("422", "fail",
                                        'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.'))
             print printOutcome("422", "pass",
-                           'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
+                               'The value of "duration" attribute of <emotion>, if present, MUST be of type xsd:nonNegativeInteger.')
 
     def test_423(self):
         """The value of the "time-ref-uri" attribute of <emotion>, if present MUST be of
@@ -1716,10 +1725,12 @@ class TestEMLAssertions(unittest.TestCase):
             emxml = emo.to_xml(Document()).toprettyxml()
         except ValueError:
             print printOutcome("423", 'pass',
-                               "The value of the \"time-ref-uri\" attribute of <emotion>, if present MUST be of  type xsd:anyURI.", "")
+                               "The value of the \"time-ref-uri\" attribute of <emotion>, if present MUST be of  type xsd:anyURI.",
+                               "")
             return
         self.fail(printOutcome("423", 'fail',
-                               "The value of the \"time-ref-uri\" attribute of <emotion>, if present MUST be of type xsd:anyURI.", ""))
+                               "The value of the \"time-ref-uri\" attribute of <emotion>, if present MUST be of type xsd:anyURI.",
+                               ""))
 
     def test_424(self):
         """ print printOutcome('424', 'pass','The value of the "time-ref-anchor-point" attribute of <emotion> is either "start" or "end".
