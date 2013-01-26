@@ -1395,8 +1395,21 @@ class TestEMLAssertions(unittest.TestCase):
     def test_302(self):
         """ The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"
 		"""
+
+        info = Info('something')
+
+        for content in ('<emotion>','<emotionml>','<reference/>','<dimension test="1">','<appraisal test="2"/>'):
+            info.content = "<something>" + content + "<something/> blah, blah"
+            try:
+                info.to_xml(Document()).toprettyxml()
+            except ValueError:
+                pass
+            else:
+                self.fail( printOutcome("302", "fail",
+                              'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"') )
         print printOutcome("302", "pass",
-                           'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"')
+                                   'The <info> element MAY contain any elements with a namespace different from the EmotionML namespace, "http://www.w3.org/2009/10/emotionml"')
+
 
     def test_303(self):
         """The <info> element MAY contain arbitrary plain text.
@@ -1560,9 +1573,16 @@ class TestEMLAssertions(unittest.TestCase):
     def test_416(self):
         """ The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string.
 		"""
-        #TODO: implement this xsd:string check on media-type
+        ref = Reference(uri="#link", media_type="image/jpeg")
+        try:
+            ref.to_xml(Document())
+        except ValueError as e:
+            print e
+            self.fail(printOutcome("416", "fail",
+                                   'The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string',))
+
         print printOutcome('416', 'pass',
-                           'The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string.')
+                           'The value of the "media-type" attribute of the <reference> element, if present, MUST be of type xsd:string')
 
     def test_417(self):
         """SUB CONSTRAINT: The value of the "media-type" attribute of the <reference> element if present, MUST be a valid MIME type."""
