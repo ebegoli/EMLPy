@@ -28,6 +28,8 @@ representations = ('dimension', 'category', 'appraisal', 'action-tendency')
 # http://www.schemacentral.com/sc/xsd/t-xsd_anyURI.html
 anyuri_regex = re.compile(r"(%[^0-9A-Fa-f]+)|(#(.*#)+)")
 
+emotion_ns_regex = re.compile( r"<emotion(.)*(/)?>|<emotionml(.)*(/)?>|<reference(.)*(/)?>|<trace(.)*(/)?>|<vocabulary(.)*(/)?>|<dimension(.)*(/)?>|<category(.)*(/)?>|<appraisal(.)*(/)?>|<action-tendency(.)*(/)?>|<info(.)*(/)?>" )
+
 
 class EmotionML:
     """ Representation for root Emotion element in EmotionML """
@@ -497,6 +499,8 @@ class Info:
                 raise ValueError('Id %s on <info> element is not of xsd:id type ' % str(self.id))
             info.setAttribute('id', self.id)
         if self.content and len(str(self.content).strip()) > 0:
+            if has_emotion_namespace_elements(self.content):
+                raise ValueError('<info> element cannot containy elements from emotionml namespace %s' % str(self.content))
             info_text = doc.createTextNode(str(self.content))
             info.appendChild(info_text)
         return info
@@ -545,6 +549,9 @@ class Trace:
         return trace
 
 
+
+
+
 class Reference:
     """Representation for the <reference> - attributes: uri required
     and optional: role and media-type. Role must be one of:
@@ -574,6 +581,8 @@ class Reference:
         if self.media_type:
             if not has_media_type(self.media_type):
                 raise TypeError("media type (" + self.media_type + ") is not recognized.")
+            if not is_xsd_string(self.media_type):
+                raise TypeError("media type (" + self.media_type + ") is not valid xsd:string.")
             ref.setAttribute('media-type', str(self.media_type))
             #if role is set, make sure it is one of accepted values
         if self.role:
@@ -594,7 +603,9 @@ def is_int(s):
 
 
 def is_positive_int(s):
-    """ Simple positive int check """
+    """ Simple positive int check
+    :rtype : bool
+    """
     try:
         val = int(s)
         return (val >= 0)
@@ -636,16 +647,23 @@ def find(f, seq):
         if f(item):
             return item
 
+def has_emotion_namespace_elements(something):
+    """ Checks that string does not contain any elements from emotionml namespace
+    """
+    return emotion_ns_regex.search(something) is not None
 
 def is_ID( val ):
     """ Checks if the value is valid xsd:id """
     reg = re.compile(r'^[a-zA-Z_][\w.-]*$')
     return reg.match(val)
 
-
 def is_uri( something ):
     """ Checks if the string complies with xsd:anyURI """
     return (something is not None) and (anyuri_regex.search(str(something)) is None)
+
+def is_xsd_string(something):
+    """ Checks if the value is proper string. Currently this is any value """
+    return True
 
 
 def has_same_name( elements ):
